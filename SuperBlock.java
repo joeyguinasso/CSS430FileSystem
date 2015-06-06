@@ -2,31 +2,29 @@ class Superblock {
 	public int totalBlocks; // the number of disk blocks
 	public int totalInodes; // the number of inodes
 	public int freeList;    // the block number of the free list's head
-	private final int defaultInodeValue = 64;	// default number of inodes
+	private final int defaultInodeBlocks = 64;	// default number of inodes
    
 	public SuperBlock( int diskSize ) {
-		byte[] buffer = new byte[512];
+		//read superblock from disk
+		byte[] superblock = new byte[512];
 		SysLib.rawread(0, buffer);
-		this.totalBlocks = SysLib.bytes2int(buffer, 0);
-		this.totalInodes = SysLib.bytes2int(buffer, 4);
-		this.freeList = SysLib.bytes2int(buffer, 8);
+		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
+		this.totalInodes = SysLib.bytes2int(superBlock, 4);
+		this.freeList = SysLib.bytes2int(superBlock, 8);
 	
 		//if correct info
-		if(this.totalBlocks == diskSize && this.totalInodes > 0 && this.freeLIst >= 2){
-			return
+		if(this.totalBlocks == diskSize && this.totalInodes > 0 && this.freeList >= 2){
+			//disk contents are valid
+			return;
 		} else {
-			this.totalBlocks = diskSize;
-			SysLib.cerr("Defaault format( " + defaultInodeValue +" ) \n");
-			this.format();
+			//need to format disk
+			totalBlocks = diskSize;
+			SysLib.cerr("Default format( " + defaultInodeBlocks +" ) \n");
+			format( defaultInodeBlocks );
 		}
    	}
 
-	//default with 64 value
-	void format(){
-		this.format(defaultInodeValue);
-	}
-
-	//overloaded format
+	//format
 	void format(int inodeValue){
 		//loop through creating new inodes
 		this.totalInodes = inodeValue;
@@ -36,7 +34,6 @@ class Superblock {
 			newInode.toDisk(i);
 		}
 
-		//
 		this.freeList = this.totalInodes * 32 / 512;
 		for(int i = this.freeList; i < this.totalBlocks; i++){
 			byte[] buffer = new byte[512];
@@ -59,7 +56,6 @@ class Superblock {
         	SysLib.cout("Superblock synchronized\n");
 	}
 
-	//figure someone might need this
 	//gets next free open block
 	public int nextFreeBlock(){
 		int freeBlock = this.freeList;
@@ -83,9 +79,4 @@ class Superblock {
 		freeList = block;
 		return true;
 	}
-	
-	
-	
-	
-	
 }
