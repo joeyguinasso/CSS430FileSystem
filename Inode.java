@@ -58,4 +58,70 @@ public class Inode{
 		SysLib.rawwrite(blockNum, data);
 		return iNodeSize;
 	}
+
+	//i think itll just be the indirect???
+	short getIndexBlockNumber(){
+		return indirect;
+	}
+
+	//
+	boolean setIndexBlock( short indexBlockNumber ){
+		for(int i = 0; i < 11; i ++){
+			if(direct[i] == -1){
+				return false;
+			}
+		}
+		
+		if(indirect != 1){
+			return false;
+		} else {
+			indirect = indexBlockNumber;
+			byte[] buffer = new byte[512];
+			for(int i = 0; i < 256; ++i){
+				SysLib.short2bytes((short)-1, buffer, i*2);
+			}
+			SysLib.rawwrite(indexBlockNumber, buffer);
+			return true;
+		}
+	}
+
+	short findTargetBlock( int offset){
+		int block = offest / 512;
+		//directly
+		if(block < 11){
+			return direct[block];
+		//no indirect
+		} else if (indirect < 0 ) {
+			return -1;
+		//indirect
+		} else {
+			byte buffer = new byte[512];
+			SysLib.rawread(indirect, buffer);
+			int blockIndex = block - 11;		//subtract 11 to recieve correct bytes
+			return SysLib.bytes2short(buffer, blockIndex*2);
+		}
+	}
+
+	//should this be boolean? or sumfin else... like return -1 instead
+	boolean setTargetBlock(int offset, short indexBlockNumber){
+		int block = offset / 512;
+		if (block < 11){
+			direct[block] = indexBlockNumber;
+			return true;
+		} else if (indirect < 0) {
+			return false;
+		} else {
+			byte[] buffer = new byte[512];
+			SysLib.rawread(indirect, buffer);
+			int blockIndex = block - 11;
+			if(SysLib.bytes2short(buffer, blockIndex*2) > 0){
+				return false;
+			} else {
+				SysLib.short2bytes(indexBlockNumber, buffer, blockIndex*2);
+				SysLIb.rawwrite(indirect, buffer);
+				return true;
+			}
+		}
+
+	}
 }
