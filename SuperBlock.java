@@ -6,7 +6,7 @@ class Superblock {
    
 	public SuperBlock( int diskSize ) {
 		//read superblock from disk
-		byte[] superblock = new byte[512];
+		byte[] superBlock = new byte[512];
 		SysLib.rawread(0, buffer);
 		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
 		this.totalInodes = SysLib.bytes2int(superBlock, 4);
