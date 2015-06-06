@@ -72,4 +72,20 @@ class Superblock {
 		}
 		return freeBlock;
 	}
+	
+	//Herb added this cuz reasons
+	public boolean retBlock(int block){
+		byte[] retblk;
+		if(block < 0 || block > totalBlocks) return false;
+		block = new byte[Disk.blockSize];
+		SysLib.int2bytes(freeList,block,0);
+		SysLib.rawwrite(block, retblk);
+		freeList = block;
+		return true;
+	}
+	
+	
+	
+	
+	
 }
