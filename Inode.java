@@ -86,36 +86,12 @@ public class Inode{
 		}
 	}
 
-<<<<<<< HEAD
 	public short findTargetBlock(int seekptr){
 		if (seekptr > length) return -1;
     	int ptr = seekptr/Disk.blockSize;
     	if (ptr < 11) {
 			System.err.println("Returning direct");
 			return direct[ptr];
-=======
-	public int findTargetBlock(int var1) {
-	        int var2 = var1 / 512;
-        	if(var2 < 11) {
-           	 return this.direct[var2];
-	        } else if(this.indirect < 0) {
-        	    return -1;
-	        } else {
-        	    byte[] var3 = new byte[512];
-	            SysLib.rawread(this.indirect, var3);
-	            int var4 = var2 - 11;
-	            return SysLib.bytes2short(var3, var4 * 2);
-        	}
-	}
-
-	/*
-	public short findTargetBlock( int offset){
-		int block = offset / Disk.blockSize;
-		//directly
-		if(block < 11){
-			return direct[block];
-		//no indirect
->>>>>>> origin/master
 		}else{
 			System.err.println("Returning indirect");
 			ptr -= 11;											
@@ -128,7 +104,6 @@ public class Inode{
 			return ptrs[ptr];
 		}
 	}
-	*/
 
 	//This is now a boolean. 
 	public boolean setTargetBlock(int offset, short indexBlockNumber){

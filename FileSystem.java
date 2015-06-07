@@ -105,7 +105,6 @@ public class FileSystem{
 		return i;
 	}
 	
-	/*
 	public synchronized int write(FileTableEntry fte, byte[] buffer){
 		if(fte == null) return -1;
 		if(fte.mode == "r") return -1;
@@ -132,64 +131,6 @@ public class FileSystem{
 		} while(i != buffer.length);
 		return i;
 	}
-<<<<<<< HEAD
-=======
-	*/
-
-	public int write(FileTableEntry var1, byte[] var2) {
-        if(var1.mode == "r") {
-            return -1;
-        } else {
-            synchronized(var1) {
-                int var4 = 0;
-                int var5 = var2.length;
-                while(var5 > 0) {
-                    int var6 = var1.inode.findTargetBlock(var1.seekPtr);
-                    if(var6 == -1) {
-                        short var7 = (short)this.superblock.getFreeBlock();
-                        switch(var1.inode.setTargetBlock(var1.seekPtr, var7)) {
-                        case -3:
-                            short var8 = (short)this.superblock.getFreeBlock();
-                            if(!var1.inode.setIndexBlock(var8)) {
-                                SysLib.cerr("ThreadOS: panic on write\n");
-                                return -1;
-                            }
-                            if(var1.inode.setTargetBlock(var1.seekPtr, var7) != 0) {
-                                SysLib.cerr("ThreadOS: panic on write\n");
-                                return -1;
-                            }
-                        case 0:
-                        default:
-                            var6 = var7;
-                            break;
-                        case -2:
-                        case -1:
-                            SysLib.cerr("ThreadOS: filesystem panic on write\n");
-                            return -1;
-                        }
-                    }
-                    byte[] var13 = new byte[512];
-                    if(SysLib.rawread(var6, var13) == -1) {
-                        System.exit(2);
-                    }
-                    int var14 = var1.seekPtr % 512;
-                    int var9 = 512 - var14;
-                    int var10 = Math.min(var9, var5);
-                    System.arraycopy(var2, var4, var13, var14, var10);
-                    SysLib.rawwrite(var6, var13);
-                    var1.seekPtr += var10;
-                    var4 += var10;
-                    var5 -= var10;
-                    if(var1.seekPtr > var1.inode.length) {
-                        var1.inode.length = var1.seekPtr;
-                    }
-                }
-                var1.inode.toDisk(var1.iNumber);
-                return var4;
-            }
-        }
-    }	
->>>>>>> origin/master
 
 	private int addBlock(Inode inode){
 		int nBlock = superblock.nextFreeBlock();
