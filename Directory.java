@@ -16,7 +16,7 @@ public class Directory{
 		root.getChars(0,fsize[0],fnames[0],0);
 	}
 	
-	public void bytes2directory(byte data[]){
+	public int bytes2directory(byte data[]){
 		int offset = 0;
 		for(int i = 0; i < fsize.length; i++){
 			fsize[i] = SysLib.bytes2int(data, offset);
@@ -27,6 +27,7 @@ public class Directory{
 			name.getChars(0,fsize[i],fnames[i],0);
 			offset += maxChars*2;
 		}
+		return 0;
 	}
 	
 	public byte[] directory2bytes(){
