@@ -3,7 +3,6 @@ class SuperBlock {
 	public int totalInodes; // the number of inodes
 	public int freeList;    // the block number of the free list's head
 	private final int defaultInodeBlocks = 64;	// default number of inodes
-<<<<<<< HEAD
 	private int diskSize;
    
 	public SuperBlock( int diskSize ) {
@@ -11,13 +10,11 @@ class SuperBlock {
 		this.diskSize = diskSize;
 		byte[] superBlock = new byte[Disk.blockSize];
 		SysLib.rawread(0, superBlock);
-=======
    
 	public SuperBlock( int diskSize ) {
 		//read superblock from disk
 		byte[] superBlock = new byte[512];
 		SysLib.rawread(0, buffer);
->>>>>>> origin/master
 		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
 		this.totalInodes = SysLib.bytes2int(superBlock, 4);
 		this.freeList = SysLib.bytes2int(superBlock, 8);
@@ -34,55 +31,22 @@ class SuperBlock {
 		}
    	}
 
-<<<<<<< HEAD
 	public int format(){
-    	  return format(defaultInodeBlocks);											
-      }
+    		return format(defaultInodeBlocks);									}
       
-    public int format(int numInodes){
-    	if (numInodes > diskSize - 1 - numInodes%16) {
-    		  return -1;
-    	}
-    	byte[] buffer = new byte[Disk.blockSize];								
-    	SysLib.rawread(0, buffer);											
-    	totalInodes = numInodes;												
-    	totalBlocks = SysLib.bytes2int(buffer, 0) ;							
-    	freeList = 1;
-    	for (short i = 1; i < totalBlocks; i++) {								
-			if (i == totalBlocks - 1)											
-				SysLib.short2bytes((short)-1, buffer, 0);
-    		else																
-				SysLib.short2bytes((short)(i + 1), buffer, 0);
-				SysLib.rawwrite(i, buffer);										
-		} 
-    	int inodeSize = 0;  																		
-    	for(short i = 0; i < numInodes; i++) {								
-			inodeSize = new Inode().toDisk(i);							
-=======
-	//format
-	void format(int inodeValue){
-		//loop through creating new inodes
-		this.totalInodes = inodeValue;
-		for(int i = 0; i < this.totalInodes; i++){
-			Inode newInode = new Inode();
-			newInode.flag = 0;
-			newInode.toDisk(i);
+    	public int format(int numInodes){
+    		if (numInodes > diskSize - 1 - numInodes%16) {
+    			return -1;
+    		}
+    		byte[] buffer = new byte[Disk.blockSize];								    	SysLib.rawread(0, buffer);										    	totalInodes = numInodes;										    	totalBlocks = SysLib.bytes2int(buffer, 0) ;							
+    		freeList = 1;
+		   	for (short i = 1; i < totalBlocks; i++) {										if (i == totalBlocks - 1){												SysLib.short2bytes((short)-1, buffer, 0);
+		    		}else {															SysLib.short2bytes((short)(i + 1), buffer, 0);
+					SysLib.rawwrite(i, buffer);										} 
+    		int inodeSize = 0;  												for(short i = 0; i < numInodes; i++) {								
+			inodeSize = new Inode().toDisk(i);	
 		}
-
-		this.freeList = this.totalInodes * 32 / 512;
-		for(int i = this.freeList; i < this.totalBlocks; i++){
-			byte[] buffer = new byte[512];
-			for(int j = 0; j < 512; j++){
-				buffer[j] = 0;
-			}
-			SysLib.int2bytes(i + 1, buffer, 0);
-			SysLib.rawwrite(i, buffer);
->>>>>>> origin/master
-		}
-    	freeList += (inodeSize * numInodes)/Disk.blockSize + ((inodeSize * numInodes)%Disk.blockSize > 0 ? 1 : 0);
-    	sync();															
-    	return 0;
-    }
+	}						
 
 	//save to superblock
 	public void sync() {
