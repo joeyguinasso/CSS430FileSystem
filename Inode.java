@@ -60,7 +60,7 @@ public class Inode{
 	}
 
 	//i think itll just be the indirect???
-
+	//do we even need this?
 	public short getIndexBlockNumber(){
 		return indirect;
 	}
@@ -86,40 +86,27 @@ public class Inode{
 		}
 	}
 
-
-	public short findTargetBlock( int offset){
-		int block = offset / Disk.blockSize;
-		//directly
-		if(block < 11){
-			return direct[block];
-		//no indirect
+	public short findTargetBlock(int seekptr){
+		if (seekptr > length) return -1;
+    	int ptr = seekptr/Disk.blockSize;
+    	if (ptr < 11) {
+			System.err.println("Returning direct");
+			return direct[ptr];
 		}else{
-			block -= 11;
-			byte[] data = new byte[Disk.blockSize];
-			SysLib.rawread(indirect, data);
-			short[] ptr = new short[Disk.blockSize/2];
-			for(int i = 0; i < data.length; i+=2){
-				ptr[i/2] = SysLib.bytes2short(data,i);
+			System.err.println("Returning indirect");
+			ptr -= 11;											
+    		byte[] data = new byte[Disk.blockSize];					
+			SysLib.rawread(indirect, data);							
+			short[] ptrs = new short[Disk.blockSize/2];				
+			for (int i = 0; i < data.length; i+=2) {					
+				ptrs[i/2] = SysLib.bytes2short(data, i);							
 			}
-			return ptr[block];
+			return ptrs[ptr];
 		}
 	}
 
 	//This is now a boolean. 
 	public boolean setTargetBlock(int offset, short indexBlockNumber){
-		} else if (indirect < 0 ) {
-			return -1;
-		//indirect
-		} else {
-			byte buffer = new byte[512];
-			SysLib.rawread(indirect, buffer);
-			int blockIndex = block - 11;		//subtract 11 to recieve correct bytes
-			return SysLib.bytes2short(buffer, blockIndex*2);
-		}
-	}
-
-	//should this be boolean? or sumfin else... like return -1 instead
-	boolean setTargetBlock(int offset, short indexBlockNumber){
 		int block = offset / Disk.blockSize;
 		if (block < 11){
 			direct[block] = indexBlockNumber;
@@ -135,7 +122,6 @@ public class Inode{
 			} else {
 				SysLib.short2bytes(indexBlockNumber, buffer, blockIndex*2);
 				SysLib.rawwrite(indirect, buffer);
-				SysLIb.rawwrite(indirect, buffer);
 				return true;
 			}
 		}

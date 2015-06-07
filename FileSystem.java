@@ -17,7 +17,7 @@ public class FileSystem{
 		diskBlocks = diskBlocks;
 		superblock = new SuperBlock(diskBlocks);
 		directory = new Directory(superblock.totalInodes);
-		filetable = new FileTable(directory);
+		filetable = new FileTable(directory, superblock.totalInodes);
 		
 		FileTableEntry dirEnt = open("/", "r");
 		int dirSize = fsize(dirEnt);
@@ -121,6 +121,7 @@ public class FileSystem{
 			int offset = fte.seekPtr%Disk.blockSize;
 			int write = Math.min(Disk.blockSize - offset, buffer.length - i);
 			int current = fte.inode.findTargetBlock(fte.seekPtr);
+			System.err.println("current is "+ current);
 			fte.seekPtr += write;
 			if(fte.seekPtr > fte.inode.length) fte.inode.length = fte.seekPtr;
 			SysLib.rawread(current, oBlock);
@@ -130,7 +131,7 @@ public class FileSystem{
 		} while(i != buffer.length);
 		return i;
 	}
-	
+
 	private int addBlock(Inode inode){
 		int nBlock = superblock.nextFreeBlock();
 		int retVal = inode.addBlock(nBlock);
