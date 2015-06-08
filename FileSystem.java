@@ -38,12 +38,19 @@ public class FileSystem{
 	}
 	
 	public boolean format(int files){
-		byte[] b = new byte[1000];
+		if (!filetable.fempty()) {
+			return false;
+		}
+		superblock.format(files);
+		directory = new Directory(superblock.totalInodes);
+		filetable = new FileTable(directory, superblock.totalInodes);
+		return true;
+		/*byte[] b = new byte[1000];
 		SysLib.int2bytes(diskBlocks,b,0);
 		SysLib.rawwrite(0,b);
 		boolean retVal = (superblock.format(files) == 0) ? true : false;
 		System.err.println("SuperBlock totalBlocks is "+superblock.totalBlocks);
-		return retVal;
+		return retVal;*/
 	}
 	
 	public synchronized FileTableEntry open(String filename, String mode){
@@ -108,8 +115,122 @@ public class FileSystem{
 		return i;
 	}
 	
-	public synchronized int write(FileTableEntry fte, byte[] buffer){
-		if(fte == null) return -1;
+	public int write(FileTableEntry fte, byte[] buffer){
+		int seekPtr, length, offset, remaining, available, wLength, index;
+		short block;
+		Inode iNode;
+		byte[] data;
+		// file table entry cannot be null
+		if (fte == null)
+			return -1;
+		// mode cannot be read only
+		//if (fte.mode == FileTableEntry.READONLY)
+			//return ERROR;
+		// iNode cannot be null
+		if ((iNode = fte.inode) == null)
+			return -1;
+		// iNode must not be in use
+		if (fte.mode.equals("r") || fte.mode.equals("w"))
+			return -1;
+		// write up to buffer length
+		length = buffer.length;
+		// on error, set iNode flag to "to be deleted" because it's probably
+		// garbage now
+		// multiple threads cannot write at the same time
+		synchronized (fte) {
+			// start at position pointed to by inode's seek pointer
+			// append should set seek pointer to EOF
+			seekPtr = fte.mode.equals("a") ? seek(fte, 0, SEEK_END): fte.seekPtr;
+			iNode.flag = 1; // set flag to write
+			index = 0;
+			data = new byte[Disk.blockSize];
+			while (index < length) {
+
+				// byte offset-- 0 is a new block
+				offset = seekPtr % Disk.blockSize;
+				// bytes available
+				available = Disk.blockSize - offset;
+				// bytes remaining
+				remaining = length - index;
+				// bytes to write-- cannot be greater than available
+				wLength = Math.min(available, remaining);
+
+				// get next block from iNode
+				if ((block = iNode.findTargetBlock(offset)) == -1) {
+					// if ERROR, file is out of memory, so get a new block
+					if ((block = (short) superblock.nextFreeBlock()) == -1) {
+						//Kernel.report("Write failure: Out of memory!");
+						iNode.flag = 0;
+						break;
+						// return ERROR; // no more free blocks
+					}
+					// read the file to the block
+					if (iNode.setTargetBlock(seekPtr, block) == false) {
+						// out of bounds, try to get a new indirect block
+						if (iNode.setIndexBlock(block) == false) {
+							//Kernel.report("Write failure: Failed to set index block "
+							//		+ block);
+							iNode.flag = 0;
+							break;
+							// return ERROR;
+						}
+						// index block set, get a new block
+						if ((block = (short) superblock.nextFreeBlock()) == -1) {
+							//Kernel.report("Write failure: Out of memory!");
+							iNode.flag = 0;
+							break;
+							// return ERROR; // no more free blocks
+						}
+						if (iNode.setTargetBlock(seekPtr, block) == false) {
+							//Kernel.report("Write failure: Failed to set target block "
+							//		+ block);
+							iNode.flag = 0;
+							break;
+							// return ERROR;
+						}
+					}
+				}
+
+				if (block >= superblock.totalBlocks) {
+					//Kernel.report("Write failure: Block" + block
+					//		+ " out of range");
+					iNode.flag = 0;
+					break;
+				}
+
+				if (offset == 0) {
+					data = new byte[Disk.blockSize];
+				}
+
+				SysLib.rawread(block, data);
+
+				// copy data to buffer
+				// source, source position, destination, destination position,
+				// length to copy
+				System.arraycopy(buffer, index, data, offset, wLength);
+				// write data to disk
+
+				SysLib.rawwrite(block, data);
+
+				index += wLength;
+				seekPtr += wLength;
+			}
+			// update iNode for append or w+
+			if (seekPtr > iNode.length)
+				iNode.length = seekPtr;
+			// set new seek pointer
+			seek(fte, index, SEEK_CUR);
+			if (iNode.flag == 0) {
+				// iNode is now USED
+				iNode.flag = 1;
+			}
+			// save iNode to disk
+			iNode.toDisk(fte.iNumber);
+		}
+		// if error was not returned, all bytes wrote successfully-- return
+		// length
+		return index;
+		/*if(fte == null) return -1;
 		if(fte.mode == "r") return -1;
 		if(fte.inode == null) return -1;
 		if(fte.inode.flag == 1) return -1; //if its in use do not write to it.
@@ -132,7 +253,7 @@ public class FileSystem{
 			i += write;
 			SysLib.rawwrite(current,oBlock);
 		} while(i != buffer.length);
-		return i;
+		return i;*/
 	}
 
 	private int addBlock(Inode inode){

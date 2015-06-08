@@ -4,295 +4,330 @@ import java.io.*;
 
 public class Kernel
 {
-   // Interrupt requests
-   public final static int INTERRUPT_SOFTWARE = 1;  // System calls
-   public final static int INTERRUPT_DISK     = 2;  // Disk interrupts
-   public final static int INTERRUPT_IO       = 3;  // Other I/O interrupts
+	// Interrupt requests
+	public final static int INTERRUPT_SOFTWARE = 1;  // System calls
+	public final static int INTERRUPT_DISK     = 2;  // Disk interrupts
+	public final static int INTERRUPT_IO       = 3;  // Other I/O interrupts
 
-   // System calls
-   public final static int BOOT    =  0; // SysLib.boot( )
-   public final static int EXEC    =  1; // SysLib.exec(String args[])
-   public final static int WAIT    =  2; // SysLib.join( )
-   public final static int EXIT    =  3; // SysLib.exit( )
-   public final static int SLEEP   =  4; // SysLib.sleep(int milliseconds)
-   public final static int RAWREAD =  5; // SysLib.rawread(int blk, byte b[])
-   public final static int RAWWRITE=  6; // SysLib.rawwrite(int blk, byte b[])
-   public final static int SYNC    =  7; // SysLib.sync( )
-   public final static int READ    =  8; // SysLib.cin( )
-   public final static int WRITE   =  9; // SysLib.cout( ) and SysLib.cerr( )
+	// System calls
+	public final static int BOOT    =  0; // SysLib.boot( )
+	public final static int EXEC    =  1; // SysLib.exec(String args[])
+	public final static int WAIT    =  2; // SysLib.join( )
+	public final static int EXIT    =  3; // SysLib.exit( )
+	public final static int SLEEP   =  4; // SysLib.sleep(int milliseconds)
+	public final static int RAWREAD =  5; // SysLib.rawread(int blk, byte b[])
+	public final static int RAWWRITE=  6; // SysLib.rawwrite(int blk, byte b[])
+	public final static int SYNC    =  7; // SysLib.sync( )
+	public final static int READ    =  8; // SysLib.cin( )
+	public final static int WRITE   =  9; // SysLib.cout( ) and SysLib.cerr( )
 
-   // System calls to be added in Assignment 4
-   public final static int CREAD   = 10; // SysLib.cread(int blk, byte b[])
-   public final static int CWRITE  = 11; // SysLib.cwrite(int blk, byte b[])
-   public final static int CSYNC   = 12; // SysLib.csync( )
-   public final static int CFLUSH  = 13; // SysLib.cflush( )
+	// System calls to be added in Assignment 4
+	public final static int CREAD   = 10; // SysLib.cread(int blk, byte b[])
+	public final static int CWRITE  = 11; // SysLib.cwrite(int blk, byte b[])
+	public final static int CSYNC   = 12; // SysLib.csync( )
+	public final static int CFLUSH  = 13; // SysLib.cflush( )
 
-   // System calls to be added in Project
-   public final static int OPEN    = 14; // SysLib.open( String fileName )
-   public final static int CLOSE   = 15; // SysLib.close( int fd )
-   public final static int SIZE    = 16; // SysLib.size( int fd )
-   public final static int SEEK    = 17; // SysLib.seek( int fd, int offest, 
-   //              int whence )
-   public final static int FORMAT  = 18; // SysLib.format( int files )
-   public final static int DELETE  = 19; // SysLib.delete( String fileName )
+	// System calls to be added in Project
+	public final static int OPEN    = 14; // SysLib.open( String fileName )
+	public final static int CLOSE   = 15; // SysLib.close( int fd )
+	public final static int SIZE    = 16; // SysLib.size( int fd )
+	public final static int SEEK    = 17; // SysLib.seek( int fd, int offest, 
+	//              int whence )
+	public final static int FORMAT  = 18; // SysLib.format( int files )
+	public final static int DELETE  = 19; // SysLib.delete( String fileName )
 
-   // Predefined file descriptors
-   public final static int STDIN  = 0;
-   public final static int STDOUT = 1;
-   public final static int STDERR = 2;
+	// Predefined file descriptors
+	public final static int STDIN  = 0;
+	public final static int STDOUT = 1;
+	public final static int STDERR = 2;
 
-   // Return values
-   public final static int OK = 0;
-   public final static int ERROR = -1;
+	// Return values
+	public final static int OK = 0;
+	public final static int ERROR = -1;
 
-   // System thread references
-   private static Scheduler scheduler;
-   private static Disk disk;
-   private static Cache cache;
-   private static FileSystem fs;
+	// System thread references
+	private static Scheduler scheduler;
+	private static Disk disk;
+	private static Cache cache;
+	private static FileSystem fs;
 
-   // Synchronized Queues
-   private static SyncQueue waitQueue;  // for threads to wait for their child
-   private static SyncQueue ioQueue;    // I/O queue
+	// Synchronized Queues
+	private static SyncQueue waitQueue;  // for threads to wait for their child
+	private static SyncQueue ioQueue;    // I/O queue
 
-   private final static int COND_DISK_REQ = 1; // wait condition 
-   private final static int COND_DISK_FIN = 2; // wait condition
+	private final static int COND_DISK_REQ = 1; // wait condition 
+	private final static int COND_DISK_FIN = 2; // wait condition
 
-   // Standard input
-   private static BufferedReader input
-      = new BufferedReader( new InputStreamReader( System.in ) );
+	// Standard input
+	private static BufferedReader input
+	= new BufferedReader( new InputStreamReader( System.in ) );
 
-   // The heart of Kernel
-   public static int interrupt(int irq, int cmd, int param, Object args) {
+	// The heart of Kernel
+	public static int interrupt( int irq, int cmd, int param, Object args ) {
 		TCB myTcb;
-		int myTid, myPid;
-		FileTableEntry myFte;
-		switch (irq) {
-			case INTERRUPT_SOFTWARE : // System calls
-				switch (cmd) {
-					case BOOT :
-						// instantiate and start a scheduler
-						scheduler = new Scheduler();
-						scheduler.start();
+		switch( irq ) {
+		case INTERRUPT_SOFTWARE: // System calls
+			switch( cmd ) { 
+			case BOOT:
+				// instantiate and start a scheduler
+				scheduler = new Scheduler( ); 
+				scheduler.start( );
 
-						// instantiate and start a disk
-						disk = new Disk(1000);
-						disk.start();
+				// instantiate and start a disk
+				disk = new Disk( 1000 );
+				disk.start( );
 
-						// instantiate a cache memory
-						cache = new Cache(Disk.blockSize, 10);
+				// instantiate a cache memory
+				cache = new Cache( disk.blockSize, 10 );
 
-						// instantiate synchronized queues
-						ioQueue = new SyncQueue();
-						waitQueue = new SyncQueue(scheduler.getMaxThreads());
+				// instantiate synchronized queues
+				ioQueue = new SyncQueue( );
+				waitQueue = new SyncQueue( scheduler.getMaxThreads( ) );
 
-						// Disk is ready, signal the ioQueue
-						ioQueue.dequeueAndWakeup(COND_DISK_REQ);
-
-						// instantiate a file system;
-						fs = new FileSystem(1000);
-
-						return OK;
-					case EXEC :
-						return sysExec((String[]) args);
-					case WAIT :
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						myTid = myTcb.getTid(); // get my thread ID
-						return waitQueue.enqueueAndSleep(myTid); 
-						// wait on my tid
-						// woken up by my child thread
-					case EXIT :
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						myTid = myTcb.getTid(); // get my ID
-						if ((myPid = myTcb.getPid()) == -1)
-							return ERROR;
-						// wake up a thread waiting on my parent ID
-						waitQueue.dequeueAndWakeup(myPid, myTid);
-						// I'm terminated!
-						scheduler.deleteThread();
-						return OK;
-					case SLEEP : // sleep a given period of milliseconds
-						scheduler.sleepThread(param); // param = milliseconds
-						return OK;
-					case RAWREAD : // read a block of data from disk
-						ioQueue.enqueueAndSleep(COND_DISK_REQ);
-						if (!disk.read(param, (byte[]) args))
-						ioQueue.enqueueAndSleep(COND_DISK_FIN);
-						disk.testAndResetReady();
-						ioQueue.dequeueAndWakeup(COND_DISK_REQ);
-
-						return OK;
-					case RAWWRITE : // write a block of data to disk
-						ioQueue.enqueueAndSleep(COND_DISK_REQ);
-						if (!disk.write(param, (byte[]) args))
-						ioQueue.enqueueAndSleep(COND_DISK_FIN);
-						disk.testAndResetReady();
-						ioQueue.dequeueAndWakeup(COND_DISK_REQ);
-
-						return OK;
-					case SYNC : // synchronize disk data to a real file
-						fs.sync();
-						ioQueue.enqueueAndSleep(COND_DISK_REQ);
-						if (!disk.sync())
-						ioQueue.enqueueAndSleep(COND_DISK_FIN);
-						disk.testAndResetReady();
-						ioQueue.dequeueAndWakeup(COND_DISK_REQ);
-						return OK;
-					case READ :
-						switch (param) {
-							case STDIN :
-								try {
-									String s; // read a keyboard input
-									if ((s = input.readLine()) == null)
-										return ERROR;
-									// prepare a read buffer
-									StringBuffer buf = (StringBuffer) args;
-
-									// append the keyboard input to this read
-									// buffer
-									buf.append(s);
-
-									// return the number of chars read from
-									// keyboard
-									return s.length();
-								} catch (IOException e) {
-									return ERROR;
-								}
-							case STDOUT :
-							case STDERR :
-								return ERROR;
-						}
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = myTcb.getFtEnt(param)) == null)
-							return ERROR;
-						return fs.read(myFte, (byte[]) args);
-					case WRITE :
-						switch (param) {
-							case STDIN :
-								return ERROR;
-							case STDOUT :
-								System.out.print(args);
-								return OK;
-							case STDERR :
-								System.err.print(args);
-								return OK;
-						}
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = myTcb.getFtEnt(param)) == null)
-							return ERROR;
-						return fs.write(myFte, (byte[]) args);
-					case CREAD :
-						return cache.read(param, (byte[]) args) ? OK : ERROR;
-					case CWRITE :
-						return cache.write(param, (byte[]) args) ? OK : ERROR;
-					case CSYNC :
-						cache.sync();
-						return OK;
-					case CFLUSH :
-						cache.flush();
-						return OK;
-					case OPEN :
-						String[] openArgs = (String[]) args;
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = fs.open(openArgs[0], openArgs[1])) == null)
-							return ERROR;
-						return myTcb.getFd(myFte);
-					case CLOSE :
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = myTcb.getFtEnt(param)) == null
-								|| fs.close(myFte) == false)
-							return ERROR;
-						if (myTcb.returnFd(param) != myFte)
-							return ERROR;
-						return OK;
-					case SIZE :
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = myTcb.getFtEnt(param)) == null)
-							return ERROR;
-						return fs.fsize(myFte);
-					case SEEK :
-						int[] seekArgs = (int[]) args;
-						if ((myTcb = scheduler.getMyTcb()) == null)
-							return ERROR;
-						if ((myFte = myTcb.getFtEnt(param)) == null)
-							return ERROR;
-						return fs.seek(myFte, seekArgs[0], seekArgs[1]);
-					case FORMAT :
-						return (fs.format(param) == true) ? OK : ERROR;
-					case DELETE :
-						return (fs.delete((String) args) == true) ? OK : ERROR;
+				fs = new FileSystem(1000);
+				return OK;
+			case EXEC:
+				return sysExec( ( String[] )args );
+			case WAIT:
+				if ( ( myTcb = scheduler.getMyTcb( ) ) != null ) {
+					int myTid = myTcb.getTid( ); // get my thread ID
+					return waitQueue.enqueueAndSleep( myTid ); //wait on my tid
+					// woken up by my child thread
 				}
 				return ERROR;
-			case INTERRUPT_DISK : // Disk interrupts
-				// wake up the thread waiting for a service completion
-				ioQueue.dequeueAndWakeup(COND_DISK_FIN);
+			case EXIT:
+				if ( ( myTcb = scheduler.getMyTcb( ) ) != null ) {
+					int myPid = myTcb.getPid( ); // get my parent ID
+					int myTid = myTcb.getTid( ); // get my ID
+					if ( myPid != -1 ) {
+						// wake up a thread waiting on my parent ID
+						waitQueue.dequeueAndWakeup( myPid, myTid );
+						// I'm terminated!
+						scheduler.deleteThread( );
+						return OK;
+					}
+				}
+				return ERROR;
+			case SLEEP:   // sleep a given period of milliseconds
+				scheduler.sleepThread( param ); // param = milliseconds
 				return OK;
-			case INTERRUPT_IO : // other I/O interrupts (not implemented)
+			case RAWREAD: // read a block of data from disk
+				while ( disk.read( param, ( byte[] )args ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_REQ );
+				while ( disk.testAndResetReady( ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_FIN );
 				return OK;
+			case RAWWRITE: // write a block of data to disk
+				while ( disk.write( param, ( byte[] )args ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_REQ );
+				while ( disk.testAndResetReady( ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_FIN );
+				return OK;
+			case SYNC:     // synchronize disk data to a real file
+				while ( disk.sync( ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_REQ );
+				while ( disk.testAndResetReady( ) == false )
+					ioQueue.enqueueAndSleep( COND_DISK_FIN );
+				return OK;
+			case READ:
+				if (param < 3) {
+					switch ( param ) {
+					case STDIN:
+						try {
+							String s = input.readLine(); // read a keyboard input
+							if ( s == null ) {
+								return ERROR;
+							}
+							// prepare a read buffer
+							StringBuffer buf = ( StringBuffer )args;
+
+							// append the keyboard intput to this read buffer
+							buf.append( s ); 
+
+							// return the number of chars read from keyboard
+							return s.length( );
+						} catch ( IOException e ) {
+							System.out.println( e );
+							return ERROR;
+						}
+					case STDOUT:
+					case STDERR:
+						System.out.println( "threaOS: caused read errors" );
+						return ERROR;
+					}
+				} else {													//If the parameters aren't 0-2, check for 3-31. If so, go into this statement
+					if (param > 31 || param < 3)							//If outside 3-31, return error
+						return ERROR;
+					if((myTcb = scheduler.getMyTcb()) != null){				//Set MyTcb. As long as it doesn't return null, continue
+						FileTableEntry fte = myTcb.getFtEnt(param);			//Create a new filetableEntry
+						if (fte != null)									//As long as it isn't null
+							return fs.read( fte, (byte[])args );			//Call read and return the result
+						else 
+							return ERROR;
+					}
+					return ERROR;
+				}
+
+				return ERROR;
+			case WRITE:
+				if (param < 3) {
+					switch ( param ) {
+					case STDIN:
+						System.out.println( "threaOS: cannot write to System.in" );
+						return ERROR;
+					case STDOUT:
+						System.out.print( (String)args );
+						break;
+					case STDERR:
+						System.err.print( (String)args );
+						break;
+					}
+				} else {													//If write is between 3-31, enter here
+					if (param > 31 || param < 0)							//Catch outliers
+						return ERROR;
+					if((myTcb = scheduler.getMyTcb()) != null){				//Set myTcb. If not null, continue.
+						FileTableEntry fte = myTcb.getFtEnt(param);			//Create a new filetableEntry
+						if (fte!=null)										//If it's not null
+							return fs.write( fte, (byte[])args );			//Write 
+						else
+							return ERROR;
+					}
+					return ERROR;
+				}
+				return OK;
+			case CREAD:   // to be implemented in assignment 4
+				return cache.read( param, ( byte[] )args ) ? OK : ERROR;
+			case CWRITE:  // to be implemented in assignment 4
+				return cache.write( param, ( byte[] )args ) ? OK : ERROR;
+			case CSYNC:   // to be implemented in assignment 4
+				cache.sync( );
+				return OK;
+			case CFLUSH:  // to be implemented in assignment 4
+				cache.flush( );
+				return OK;
+			case OPEN:    // to be implemented in project
+				if((myTcb = scheduler.getMyTcb()) != null){					//Set MyTcb
+					String[] s = (String[])args;							//Create a string out of the args passed in
+					FileTableEntry ent = fs.open(s[0], s[1]);				//Open the filetableEntry
+					if (ent == null)
+						return ERROR;
+					int fd = myTcb.getFd(ent);								//Get the file descriptor
+					if (fd == -1) {
+						fs.close(ent);										//Close the filetableEntry
+					}
+					return fd;												//Return the file descriptor
+				}
+				return ERROR;
+
+			case CLOSE:   // to be implemented in project
+				if ((myTcb = scheduler.getMyTcb()) != null) {				//Get MyTcb
+					FileTableEntry fte = myTcb.returnFd(param);				//Create the FiletableEntry
+					// his code returns a boolean 
+					if (fs.close(fte) == true) {								//close the entry
+						return 0;
+					} else {
+						return -1;
+					}
+				}
+				return ERROR;
+
+
+			case SIZE:    // to be implemented in project
+				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
+					FileTableEntry fte = myTcb.getFtEnt(param);										//the fd comes from the parameters
+					int size = fs.fsize(fte);							//Call to find size on the file descriptors
+					return size;											//Return the size
+				}
+				return ERROR;
+
+			case SEEK:    // to be implemented in project
+				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
+					int[] arg = (int[])args;								//Cast args to int array
+					FileTableEntry fte = myTcb.getFtEnt(arg[0]);			//Create the filetableEntry
+					return fs.seek(fte, arg[1], arg[2]);					//Call seek with args and fte
+				}
+				return ERROR;
+
+			case FORMAT:  // to be implemented in project
+				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
+					String[] s = (String[])args;							//Cast args to string array
+					return (fs.format(param) == true) ? OK:ERROR;								//Call format with parameter
+				}
+				return ERROR;
+
+			case DELETE:  // to be implemented in project
+				if((myTcb = scheduler.getMyTcb()) != null ){				//Get Mycb
+					return (fs.delete((String)args) == true) ? OK:ERROR;	//Call delete with args and return error or success
+				}
+				return ERROR;
+			}
+			return ERROR;
+		case INTERRUPT_DISK: // Disk interrupts
+			// wake up the thread waiting for a service completion
+			ioQueue.dequeueAndWakeup( COND_DISK_FIN );
+
+			// wake up the thread waiting for a request acceptance
+			ioQueue.dequeueAndWakeup( COND_DISK_REQ );
+
+			return OK;
+		case INTERRUPT_IO:   // other I/O interrupts (not implemented)
+			return OK;
 		}
 		return OK;
 	}
 
-   // Spawning a new thread
-   private static int sysExec( String args[] ) {
-      String thrName = args[0]; // args[0] has a thread name
-      Object thrObj = null;
+		// Spawning a new thread
+		private static int sysExec( String args[] ) {
+			String thrName = args[0]; // args[0] has a thread name
+			Object thrObj = null;
 
-      try {
-         //get the user thread class from its name
-         Class thrClass = Class.forName( thrName ); 
-         if ( args.length == 1 ) // no arguments
-            thrObj = thrClass.newInstance( ); // instantiate this class obj
-         else {                  // some arguments
-            // copy all arguments into thrArgs[] and make a new constructor
-            // argument object from thrArgs[]
-            String thrArgs[] = new String[ args.length - 1 ];
-            for ( int i = 1; i < args.length; i++ ){
-               thrArgs[i - 1] = args[i];
+			try {
+				//get the user thread class from its name
+				Class thrClass = Class.forName( thrName ); 
+				if ( args.length == 1 ) // no arguments
+					thrObj = thrClass.newInstance( ); // instantiate this class obj
+				else {                  // some arguments
+					// copy all arguments into thrArgs[] and make a new constructor
+					// argument object from thrArgs[]
+					String thrArgs[] = new String[ args.length - 1 ];
+					for ( int i = 1; i < args.length; i++ )
+						thrArgs[i - 1] = args[i];
+					Object[] constructorArgs = new Object[] { thrArgs };
+
+					// locate this class object's constructors
+					Constructor thrConst 
+					= thrClass.getConstructor( new Class[] {String[].class} );
+
+					// instantiate this class object by calling this constructor
+					// with arguments
+					thrObj = thrConst.newInstance( constructorArgs );
+				}
+				// instantiate a new thread of this object
+				Thread t = new Thread( (Runnable)thrObj );
+
+				// add this thread into scheduler's circular list.
+				TCB newTcb = scheduler.addThread( t );
+				return ( newTcb != null ) ? newTcb.getTid( ) : ERROR;
 			}
-            Object[] constructorArgs = new Object[] { thrArgs };
-
-            // locate this class object's constructors
-            Constructor thrConst 
-               = thrClass.getConstructor( new Class[] {String[].class} );
-
-            // instantiate this class object by calling this constructor
-            // with arguments
-            thrObj = thrConst.newInstance( constructorArgs );
-         }
-         // instantiate a new thread of this object
-         Thread t = new Thread( (Runnable)thrObj );
-
-         // add this thread into scheduler's circular list.
-         TCB newTcb = scheduler.addThread( t );
-         return ( newTcb != null ) ? newTcb.getTid( ) : ERROR;
-      }
-      catch ( ClassNotFoundException e ) {
-         System.out.println( e );
-         return ERROR;
-      }
-      catch ( NoSuchMethodException e ) {
-         System.out.println( e );
-         return ERROR;
-      }
-      catch ( InstantiationException e ) {
-         System.out.println( e );
-         return ERROR;
-      }
-      catch ( IllegalAccessException e ) {
-         System.out.println( e );
-         return ERROR;
-      }
-      catch ( InvocationTargetException e ) {
-         System.out.println( e );
-         return ERROR;
-      }
-   }
+			catch ( ClassNotFoundException e ) {
+				System.out.println( e );
+				return ERROR;
+			}
+			catch ( NoSuchMethodException e ) {
+				System.out.println( e );
+				return ERROR;
+			}
+			catch ( InstantiationException e ) {
+				System.out.println( e );
+				return ERROR;
+			}
+			catch ( IllegalAccessException e ) {
+				System.out.println( e );
+				return ERROR;
+			}
+			catch ( InvocationTargetException e ) {
+				System.out.println( e );
+				return ERROR;
+			}
+		}
 }

@@ -1,0 +1,31 @@
+Script started on Mon 08 Jun 2015 12:59:13 AM PDT
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ java Boot
+threadOS ver 1.0:
+Type ? for help
+threadOS: a new thread (thread=Thread[Thread-3,2,main] tid=0 pid=-1)
+-->l Test5
+l Test5
+threadOS: a new thread (thread=Thread[Thread-5,2,main] tid=1 pid=0)
+1: format( 48 )...................Superblock synchronized
+successfully completed
+Correct behavior of format......................2
+2: fd = open( "css430", "w+" )....successfully completed
+Correct behavior of open........................2
+3: size = write( fd, buf[16] )....successfully completed
+Correct behavior of writing a few bytes.........2
+4: close( fd )....................successfully completed
+Correct behavior of close.......................2
+5: reopen and read from "css430"..size = 0 (wrong)
+6: append buf[32] to "css430".....size = 0 (wrong)
+7: seek and read from "css430"....seek(fd,10,0)=0 (wrong)
+8: open "css430" with w+..........tmpBuf[1]=0 (wrong)
+9: fd = open( "bothell", "w" )....successfully completed
+10: size = write( fd, buf[6656] ).successfully completed
+Correct behavior of writing a lot of bytes....0.5
+11: close( fd )....................successfully completed
+12: reopen and read from "bothell"size = 0 (wrong)
+13: append buf[32] to "bothell"...size = 0 (wrong)
+14: seek and read from "bothell"...seek(fd,512 * 11,0)=0 (wrong)
+15: open "bothell" with w+.........^C]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ exit
+
+Script done on Mon 08 Jun 2015 01:00:22 AM PDT

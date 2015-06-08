@@ -11,7 +11,7 @@ class SuperBlock {
 		byte[] superBlock = new byte[Disk.blockSize];
 		SysLib.rawread(0, superBlock);
 		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
-		System.err.println("SuperBlock totalBlocks is "+totalBlocks);
+		//System.err.println("SuperBlock totalBlocks is "+totalBlocks);
 		this.totalInodes = SysLib.bytes2int(superBlock, 4);
 		this.freeList = SysLib.bytes2int(superBlock, 8);
 		//if correct info
@@ -39,6 +39,7 @@ class SuperBlock {
     	totalInodes = numInodes;												
     	totalBlocks = SysLib.bytes2int(buffer, 0);							
     	freeList = 1;
+		//System.err.println("In FORMAT SuperBlock totalBlocks is "+totalBlocks);
     	for (short i = 1; i < totalBlocks; i++) {								
 			if (i == totalBlocks - 1){											
 				SysLib.short2bytes((short)-1, buffer, 0);
