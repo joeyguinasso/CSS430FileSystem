@@ -90,10 +90,10 @@ public class Inode{
 		if (seekptr > length) return -1;
     	int ptr = seekptr/Disk.blockSize;
     	if (ptr < 11) {
-			System.err.println("Returning direct");
+			//System.err.println("Returning direct");
 			return direct[ptr];
 		}else{
-			System.err.println("Returning indirect");
+			//System.err.println("Returning indirect");
 			ptr -= 11;											
     		byte[] data = new byte[Disk.blockSize];					
 			SysLib.rawread(indirect, data);							

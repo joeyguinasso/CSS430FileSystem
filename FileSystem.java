@@ -41,12 +41,15 @@ public class FileSystem{
 		byte[] b = new byte[1000];
 		SysLib.int2bytes(diskBlocks,b,0);
 		SysLib.rawwrite(0,b);
-		return (superblock.format(files) == 0) ? true : false;
+		boolean retVal = (superblock.format(files) == 0) ? true : false;
+		System.err.println("SuperBlock totalBlocks is "+superblock.totalBlocks);
+		return retVal;
 	}
 	
 	public synchronized FileTableEntry open(String filename, String mode){
 		if(!filename.equals("/")){
 			short inode = directory.namei(filename);
+			//System.err.println("inode is "+(int)inode);
 			if(inode == -1 && mode.equals("r")) return null;
 			FileTableEntry fte;
 			if(inode < 0) directory.ialloc(filename);
@@ -121,7 +124,7 @@ public class FileSystem{
 			int offset = fte.seekPtr%Disk.blockSize;
 			int write = Math.min(Disk.blockSize - offset, buffer.length - i);
 			int current = fte.inode.findTargetBlock(fte.seekPtr);
-			System.err.println("current is "+ current);
+			//System.err.println("current is "+ current);
 			fte.seekPtr += write;
 			if(fte.seekPtr > fte.inode.length) fte.inode.length = fte.seekPtr;
 			SysLib.rawread(current, oBlock);

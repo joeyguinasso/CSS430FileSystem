@@ -1,6 +1,6 @@
 import java.util.*;
 
-/*public class Directory{
+public class Directory{
 	private static int maxChars = 30;
 	
 	//directory entries
@@ -91,7 +91,7 @@ import java.util.*;
 		}
 		return -1;
 	}
-}*/
+}/*
 public class Directory{
 	private static int maxChars = 30;
 	
@@ -190,4 +190,4 @@ public class Directory{
 			return -1;
 		}
 	}
-}
+}*/

@@ -11,9 +11,9 @@ class SuperBlock {
 		byte[] superBlock = new byte[Disk.blockSize];
 		SysLib.rawread(0, superBlock);
 		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
+		System.err.println("SuperBlock totalBlocks is "+totalBlocks);
 		this.totalInodes = SysLib.bytes2int(superBlock, 4);
 		this.freeList = SysLib.bytes2int(superBlock, 8);
-	
 		//if correct info
 		if(this.totalBlocks == diskSize && this.totalInodes > 0 && this.freeList >= 2){
 			//disk contents are valid
@@ -28,7 +28,7 @@ class SuperBlock {
 
 	public int format(){
     	  return format(defaultInodeBlocks);											
-      }
+    }
       
     public int format(int numInodes){
     	if (numInodes > diskSize - 1 - numInodes%16) {
@@ -37,7 +37,7 @@ class SuperBlock {
     	byte[] buffer = new byte[Disk.blockSize];								
     	SysLib.rawread(0, buffer);											
     	totalInodes = numInodes;												
-    	totalBlocks = SysLib.bytes2int(buffer, 0) ;							
+    	totalBlocks = SysLib.bytes2int(buffer, 0);							
     	freeList = 1;
     	for (short i = 1; i < totalBlocks; i++) {								
 			if (i == totalBlocks - 1){											
@@ -55,6 +55,7 @@ class SuperBlock {
     	sync();															
     	return 0;
     }
+	
 
 	//save to superblock
 	public void sync() {
