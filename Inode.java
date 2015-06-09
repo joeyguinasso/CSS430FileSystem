@@ -42,7 +42,41 @@ public class Inode{
 		indirect = SysLib.bytes2short(data, offset);
 	}
 	
-	public int toDisk(short var1) {
+	public int toDisk(short iNumber) {
+		// initialize the Inode to be added back to Disk
+		int offset, block;
+		byte[] data;
+		if (iNumber < 0)
+			return -1;
+		block = getOffset(iNumber);
+		// get the Disk block at the iNumber-th place
+		offset = (iNumber % 16) * iNodeSize;
+		data = new byte[Disk.blockSize];
+		// same flow as constructor
+		SysLib.int2bytes(length, data, offset);
+		offset += 4;
+		SysLib.short2bytes(count, data, offset);
+		offset += 2;
+		SysLib.short2bytes(flag, data, offset);
+		offset += 2;
+
+		for (int i = 0; i < directSize; i++, offset += 2) {
+			SysLib.short2bytes(direct[i], data, offset);
+		}
+
+		SysLib.short2bytes(indirect, data, offset);
+		offset += 2;
+
+		// write back to Disk
+		SysLib.rawwrite(block, data);
+		return 0;
+	}
+	
+	public int getOffset(int iNumber) {
+		return 1 + iNumber / 16;
+	}
+	
+	/*public int toDisk(short var1) {
         byte[] var2 = new byte[32];
         byte var3 = 0;
         SysLib.int2bytes(this.length, var2, var3);
@@ -65,7 +99,7 @@ public class Inode{
         System.arraycopy(var2, 0, var5, var6, 32);
         SysLib.rawwrite(var4, var5);
 		return 0;
-    }
+    }*/
 	
 	/*public int toDisk(short iNumber){
 		int blockNum = 1 + iNumber / 16;

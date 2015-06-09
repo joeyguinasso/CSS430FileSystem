@@ -149,6 +149,19 @@ public class FileTable{
 	public synchronized boolean ffree(FileTableEntry e){
 		boolean retVal = table.removeElement(e);
 		if(retVal == true){
+			e.inode.count--;
+			if(e.inode.count == 0){
+				e.inode.flag = 0;
+			}
+			e.inode.toDisk(e.iNumber);
+			e = null;
+			notifyAll();
+			return true;
+		}else{
+			return false;
+		}
+		/*boolean retVal = table.removeElement(e);
+		if(retVal == true){
 			e.inode.flag = 0;
 			if(e.inode.flag != 0){
 				e.inode.count--;
@@ -160,7 +173,7 @@ public class FileTable{
 		}else{
 			System.out.println("No such file table entry");
 			return false;
-		}
+		}*/
 	}
 	
 	public synchronized boolean fempty(){

@@ -153,13 +153,16 @@ public class FileSystem{
 
 				// read block from disk to data
 				SysLib.rawread(block, data);
+				/*for(int i = 0; i < data.length; i++){
+					System.err.println("DATA AFTER READING FROM DISK IS "+data[i]);
+				}*/
 
 				// copy data to buffer
 				// source, source position, destination, destination position,
 				// length to copy
 				System.arraycopy(data, offset, buffer, index, rLength);
 				/*System.err.println("AFTER COPY FROM DATA TO BUFFER");
-				for(int i = offset; i < buffer.length; i++){
+				for(int i = offset; i < rLength; i++){
 					if(buffer[i] == data[i]){
 						System.err.println("buffer[" + (i) +"] is "+buffer[(i)] + " data[" + i + "] is "+data[i]);
 					}
@@ -291,20 +294,23 @@ public class FileSystem{
 				// copy data to buffer
 				// source, source position, destination, destination position,
 				// length to copy
-				System.err.println("wLength of copy is "+wLength);
-				System.err.println("buffer.length of copy is "+buffer.length);
+				//System.err.println("wLength of copy is "+wLength);
+				//System.err.println("buffer.length of copy is "+buffer.length);
 				System.arraycopy(buffer, index, data, offset, wLength);
 				// write data to disk
-				System.err.println("AFTER COPY FROM BUFFER TO DATA");
-				for(int i = 0; i < buffer.length; i++){
+				/*System.err.println("AFTER COPY FROM BUFFER TO DATA");
+				for(int i = 0; i < wLength; i++){
 					if(fte.mode.equals("a") && buffer[i] == data[i + offset]){
 						System.err.println("buffer[" + (i) +"] is "+buffer[(i)] + " data[" + (i+offset) + "] is "+data[i+offset]);
 					}else if(!fte.mode.equals("a") && buffer[i] == data[i]){
 						System.err.println("buffer[" + i +"] is "+buffer[i] + " data[" + i + "] is "+data[i]);
 					}
 				}
-				System.err.println("AFTER CHECKING COPY FROM BUFFER TO DATA");
+				System.err.println("AFTER CHECKING COPY FROM BUFFER TO DATA");*/
 				SysLib.rawwrite(block, data);
+				/*for(int i = 0; i < data.length; i++){
+					System.err.println("DATA AFTER WRITING TO DISK IS "+data[i]);
+				}*/
 
 				index += wLength;
 				seekPtr += wLength;
