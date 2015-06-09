@@ -61,9 +61,11 @@ public class FileSystem{
 			FileTableEntry fte;
 			if(inode < 0) directory.ialloc(filename);
 			fte = filetable.falloc(filename, mode);
+			//System.err.println("file size is "+ fte.inode.length);
 			if(mode.equals("w")){
 				deallocAllBlocks(fte);
 			}else if(mode.equals("a")){
+				//System.err.println("OPEN fte.seekPtr is before fte.inode.length "+ fte.seekPtr);
 				fte.seekPtr = fte.inode.length;
 			}else if(mode.equals("r") || mode.equals("w+")){
 				//nothing
@@ -96,7 +98,86 @@ public class FileSystem{
 		return inode.length;
 	}
 	
-	public synchronized int read(FileTableEntry fte, byte[] buffer) {
+	
+	public int read(FileTableEntry fte, byte[] buffer) {
+		int seekPtr, length, block, offset, available, remaining, rLength, index;
+		Inode iNode;
+		byte[] data;
+		// file table entry cannot be null
+		if (fte == null)
+			return -1;
+		// mode must be read
+		if (fte.mode.equals("w+")
+				|| fte.mode.equals("a"))
+			return -1;
+		// iNode cannot be null
+		if ((iNode = fte.inode) == null)
+			return -1;
+		// read up to buffer length
+		length = buffer.length;
+
+		// multiple threads cannot read at the same time
+		synchronized (fte) {
+			// start at position pointed to by iNode's seek pointer
+			seekPtr = fte.seekPtr;
+			data = new byte[Disk.blockSize];
+			index = 0;
+			while (index < length) {
+				// byte offset-- 0 is a new block
+				offset = seekPtr % Disk.blockSize;
+				// bytes available
+				available = Disk.blockSize - offset;
+				// bytes remaining
+				remaining = length - index;
+				// bytes to read-- cannot be greater than available
+				rLength = Math.min(available, remaining);
+
+				// block must exist
+				if ((block = iNode.findTargetBlock(offset)) == -1) {
+					// if ((block = iNode.findTargetBlock(seekPtr)) == ERROR) {
+					//Kernel.report("Read failure: Failed to find target block "
+					//		+ seekPtr + "\n");
+					return -1;
+				}
+
+				if (block < 0 || block >= superblock.totalBlocks) {
+					//Kernel.report("Read error: Block " + block
+					//		+ " out of range\n");
+					break;
+					// return ERROR;
+				}
+
+				if (offset == 0) {
+					data = new byte[Disk.blockSize];
+				}
+
+				// read block from disk to data
+				SysLib.rawread(block, data);
+
+				// copy data to buffer
+				// source, source position, destination, destination position,
+				// length to copy
+				System.arraycopy(data, offset, buffer, index, rLength);
+				/*System.err.println("AFTER COPY FROM DATA TO BUFFER");
+				for(int i = offset; i < buffer.length; i++){
+					if(buffer[i] == data[i]){
+						System.err.println("buffer[" + (i) +"] is "+buffer[(i)] + " data[" + i + "] is "+data[i]);
+					}
+				}
+				System.err.println("AFTER CHECKING COPY FROM DATA TO BUFFER");*/
+
+				index += rLength;
+				seekPtr += rLength;
+			}
+			// set new seek pointer
+			//System.err.println("READ fte.seekPtr is before seek: "+ fte.seekPtr);
+			seek(fte, index, SEEK_CUR);
+			//System.err.println("READ fte.seekPtr is after seek: "+ fte.seekPtr);
+		}
+		return index;
+	}
+	
+	/*public synchronized int read(FileTableEntry fte, byte[] buffer) {
 		if(fte == null) return -1;
 		if(fte.mode == "w") return -1;
 		if(fte.mode == "a") return -1;
@@ -113,7 +194,7 @@ public class FileSystem{
 				fte.seekPtr += read;
 			}
 		return i;
-	}
+	}*/
 	
 	public int write(FileTableEntry fte, byte[] buffer){
 		int seekPtr, length, offset, remaining, available, wLength, index;
@@ -138,9 +219,11 @@ public class FileSystem{
 		// garbage now
 		// multiple threads cannot write at the same time
 		synchronized (fte) {
+			//System.err.println("WRITE fte.seekPtr is before writing: "+ fte.seekPtr);
 			// start at position pointed to by inode's seek pointer
 			// append should set seek pointer to EOF
-			seekPtr = fte.mode.equals("a") ? seek(fte, 0, SEEK_END): fte.seekPtr;
+			seekPtr = fte.mode.equals("a") ? seek(fte, 4, SEEK_END): fte.seekPtr;
+			//if(fte.mode.equals("a")) System.err.println("WRITE fte.seekPtr is for APPEND: "+ fte.seekPtr);
 			iNode.flag = 1; // set flag to write
 			index = 0;
 			data = new byte[Disk.blockSize];
@@ -148,6 +231,7 @@ public class FileSystem{
 
 				// byte offset-- 0 is a new block
 				offset = seekPtr % Disk.blockSize;
+				//System.err.println("seekPtr is set at "+seekPtr);
 				// bytes available
 				available = Disk.blockSize - offset;
 				// bytes remaining
@@ -207,19 +291,33 @@ public class FileSystem{
 				// copy data to buffer
 				// source, source position, destination, destination position,
 				// length to copy
+				System.err.println("wLength of copy is "+wLength);
+				System.err.println("buffer.length of copy is "+buffer.length);
 				System.arraycopy(buffer, index, data, offset, wLength);
 				// write data to disk
-
+				System.err.println("AFTER COPY FROM BUFFER TO DATA");
+				for(int i = 0; i < buffer.length; i++){
+					if(fte.mode.equals("a") && buffer[i] == data[i + offset]){
+						System.err.println("buffer[" + (i) +"] is "+buffer[(i)] + " data[" + (i+offset) + "] is "+data[i+offset]);
+					}else if(!fte.mode.equals("a") && buffer[i] == data[i]){
+						System.err.println("buffer[" + i +"] is "+buffer[i] + " data[" + i + "] is "+data[i]);
+					}
+				}
+				System.err.println("AFTER CHECKING COPY FROM BUFFER TO DATA");
 				SysLib.rawwrite(block, data);
 
 				index += wLength;
 				seekPtr += wLength;
 			}
 			// update iNode for append or w+
-			if (seekPtr > iNode.length)
+			if (seekPtr > iNode.length){
 				iNode.length = seekPtr;
+				//System.err.println("seekPtr > inode.length, seekPtr is " + seekPtr);
+			}
 			// set new seek pointer
+			//System.err.println("WRITE fte.seekPtr is before seek: "+ fte.seekPtr);
 			seek(fte, index, SEEK_CUR);
+			//System.err.println("WRITE fte.seekPtr is after seek: "+ fte.seekPtr);
 			if (iNode.flag == 0) {
 				// iNode is now USED
 				iNode.flag = 1;

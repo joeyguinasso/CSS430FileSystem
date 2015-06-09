@@ -167,7 +167,6 @@ public class Kernel
 					}
 					return ERROR;
 				}
-
 				return ERROR;
 			case WRITE:
 				if (param < 3) {

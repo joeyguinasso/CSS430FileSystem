@@ -1,5 +1,11 @@
-Script started on Mon 08 Jun 2015 12:59:13 AM PDT
-]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ java Boot
+Script started on Tue 09 Jun 2015 12:25:15 AM PDT
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ script lab5.txtjavac FileSystem.java SuperBlock.java FileTable.java  Directory.java Inode.java SuperBlock.java SysLib.java FileTableEntry.java Kernell.java Test5.java[A[A]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ script lab5.txt[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cjavac FileSystem.java SuperBlock.java FileTable.java  Directory.java Inode.java SuperBlock.java SysLib.java FileTableEntry.java Kernell.java Test5.java[A[A]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ script lab5.txt[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cjavac FileSystem.java SuperBlock.java FileTable.java  Directory.java Inode.java SuperBlock.java SysLib.java FileTableEntry.java Kernell.java Test5.java[A[A]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ [C[C[C[C Boot[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
 threadOS ver 1.0:
 Type ? for help
 threadOS: a new thread (thread=Thread[Thread-3,2,main] tid=0 pid=-1)
@@ -7,25 +13,605 @@ threadOS: a new thread (thread=Thread[Thread-3,2,main] tid=0 pid=-1)
 l Test5
 threadOS: a new thread (thread=Thread[Thread-5,2,main] tid=1 pid=0)
 1: format( 48 )...................Superblock synchronized
-successfully completed
-Correct behavior of format......................2
+freeList = 1 (wrong)
 2: fd = open( "css430", "w+" )....successfully completed
 Correct behavior of open........................2
-3: size = write( fd, buf[16] )....successfully completed
+3: size = write( fd, buf[16] )....wLength of copy is 16
+buffer.length of copy is 16
+AFTER COPY FROM BUFFER TO DATA
+buffer[0] is 0 data[0] is 0
+buffer[1] is 1 data[1] is 1
+buffer[2] is 2 data[2] is 2
+buffer[3] is 3 data[3] is 3
+buffer[4] is 4 data[4] is 4
+buffer[5] is 5 data[5] is 5
+buffer[6] is 6 data[6] is 6
+buffer[7] is 7 data[7] is 7
+buffer[8] is 8 data[8] is 8
+buffer[9] is 9 data[9] is 9
+buffer[10] is 10 data[10] is 10
+buffer[11] is 11 data[11] is 11
+buffer[12] is 12 data[12] is 12
+buffer[13] is 13 data[13] is 13
+buffer[14] is 14 data[14] is 14
+buffer[15] is 15 data[15] is 15
+AFTER CHECKING COPY FROM BUFFER TO DATA
+successfully completed
 Correct behavior of writing a few bytes.........2
 4: close( fd )....................successfully completed
 Correct behavior of close.......................2
-5: reopen and read from "css430"..size = 0 (wrong)
-6: append buf[32] to "css430".....size = 0 (wrong)
-7: seek and read from "css430"....seek(fd,10,0)=0 (wrong)
-8: open "css430" with w+..........tmpBuf[1]=0 (wrong)
+5: reopen and read from "css430"..successfully completed
+Correct behavior of reading a few bytes.........2
+6: append buf[32] to "css430".....wLength of copy is 32
+buffer.length of copy is 32
+AFTER COPY FROM BUFFER TO DATA
+buffer[0] is 16 data[16] is 16
+buffer[1] is 17 data[17] is 17
+buffer[2] is 18 data[18] is 18
+buffer[3] is 19 data[19] is 19
+buffer[4] is 20 data[20] is 20
+buffer[5] is 21 data[21] is 21
+buffer[6] is 22 data[22] is 22
+buffer[7] is 23 data[23] is 23
+buffer[8] is 24 data[24] is 24
+buffer[9] is 25 data[25] is 25
+buffer[10] is 26 data[26] is 26
+buffer[11] is 27 data[27] is 27
+buffer[12] is 28 data[28] is 28
+buffer[13] is 29 data[29] is 29
+buffer[14] is 30 data[30] is 30
+buffer[15] is 31 data[31] is 31
+buffer[16] is 32 data[32] is 32
+buffer[17] is 33 data[33] is 33
+buffer[18] is 34 data[34] is 34
+buffer[19] is 35 data[35] is 35
+buffer[20] is 36 data[36] is 36
+buffer[21] is 37 data[37] is 37
+buffer[22] is 38 data[38] is 38
+buffer[23] is 39 data[39] is 39
+buffer[24] is 40 data[40] is 40
+buffer[25] is 41 data[41] is 41
+buffer[26] is 42 data[42] is 42
+buffer[27] is 43 data[43] is 43
+buffer[28] is 44 data[44] is 44
+buffer[29] is 45 data[45] is 45
+buffer[30] is 46 data[46] is 46
+buffer[31] is 47 data[47] is 47
+AFTER CHECKING COPY FROM BUFFER TO DATA
+buf[32] = 0 (wrong)
+7: seek and read from "css430"....seek(fd,-2,2) contents -1(wrong)
+8: open "css430" with w+..........wLength of copy is 24
+buffer.length of copy is 24
+AFTER COPY FROM BUFFER TO DATA
+buffer[12] is 12 data[12] is 12
+AFTER CHECKING COPY FROM BUFFER TO DATA
+tmpBuf[1]=0 (wrong)
 9: fd = open( "bothell", "w" )....successfully completed
-10: size = write( fd, buf[6656] ).successfully completed
-Correct behavior of writing a lot of bytes....0.5
-11: close( fd )....................successfully completed
-12: reopen and read from "bothell"size = 0 (wrong)
-13: append buf[32] to "bothell"...size = 0 (wrong)
-14: seek and read from "bothell"...seek(fd,512 * 11,0)=0 (wrong)
-15: open "bothell" with w+.........^C]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ exit
+10: size = write( fd, buf[6656] ).wLength of copy is 512
+buffer.length of copy is 6656
+AFTER COPY FROM BUFFER TO DATA
+buffer[0] is 0 data[0] is 0
+buffer[1] is 1 data[1] is 1
+buffer[2] is 2 data[2] is 2
+buffer[3] is 3 data[3] is 3
+buffer[4] is 4 data[4] is 4
+buffer[5] is 5 data[5] is 5
+buffer[6] is 6 data[6] is 6
+buffer[7] is 7 data[7] is 7
+buffer[8] is 8 data[8] is 8
+buffer[9] is 9 data[9] is 9
+buffer[10] is 10 data[10] is 10
+buffer[11] is 11 data[11] is 11
+buffer[12] is 12 data[12] is 12
+buffer[13] is 13 data[13] is 13
+buffer[14] is 14 data[14] is 14
+buffer[15] is 15 data[15] is 15
+buffer[16] is 16 data[16] is 16
+buffer[17] is 17 data[17] is 17
+buffer[18] is 18 data[18] is 18
+buffer[19] is 19 data[19] is 19
+buffer[20] is 20 data[20] is 20
+buffer[21] is 21 data[21] is 21
+buffer[22] is 22 data[22] is 22
+buffer[23] is 23 data[23] is 23
+buffer[24] is 24 data[24] is 24
+buffer[25] is 25 data[25] is 25
+buffer[26] is 26 data[26] is 26
+buffer[27] is 27 data[27] is 27
+buffer[28] is 28 data[28] is 28
+buffer[29] is 29 data[29] is 29
+buffer[30] is 30 data[30] is 30
+buffer[31] is 31 data[31] is 31
+buffer[32] is 32 data[32] is 32
+buffer[33] is 33 data[33] is 33
+buffer[34] is 34 data[34] is 34
+buffer[35] is 35 data[35] is 35
+buffer[36] is 36 data[36] is 36
+buffer[37] is 37 data[37] is 37
+buffer[38] is 38 data[38] is 38
+buffer[39] is 39 data[39] is 39
+buffer[40] is 40 data[40] is 40
+buffer[41] is 41 data[41] is 41
+buffer[42] is 42 data[42] is 42
+buffer[43] is 43 data[43] is 43
+buffer[44] is 44 data[44] is 44
+buffer[45] is 45 data[45] is 45
+buffer[46] is 46 data[46] is 46
+buffer[47] is 47 data[47] is 47
+buffer[48] is 48 data[48] is 48
+buffer[49] is 49 data[49] is 49
+buffer[50] is 50 data[50] is 50
+buffer[51] is 51 data[51] is 51
+buffer[52] is 52 data[52] is 52
+buffer[53] is 53 data[53] is 53
+buffer[54] is 54 data[54] is 54
+buffer[55] is 55 data[55] is 55
+buffer[56] is 56 data[56] is 56
+buffer[57] is 57 data[57] is 57
+buffer[58] is 58 data[58] is 58
+buffer[59] is 59 data[59] is 59
+buffer[60] is 60 data[60] is 60
+buffer[61] is 61 data[61] is 61
+buffer[62] is 62 data[62] is 62
+buffer[63] is 63 data[63] is 63
+buffer[64] is 64 data[64] is 64
+buffer[65] is 65 data[65] is 65
+buffer[66] is 66 data[66] is 66
+buffer[67] is 67 data[67] is 67
+buffer[68] is 68 data[68] is 68
+buffer[69] is 69 data[69] is 69
+buffer[70] is 70 data[70] is 70
+buffer[71] is 71 data[71] is 71
+buffer[72] is 72 data[72] is 72
+buffer[73] is 73 data[73] is 73
+buffer[74] is 74 data[74] is 74
+buffer[75] is 75 data[75] is 75
+buffer[76] is 76 data[76] is 76
+buffer[77] is 77 data[77] is 77
+buffer[78] is 78 data[78] is 78
+buffer[79] is 79 data[79] is 79
+buffer[80] is 80 data[80] is 80
+buffer[81] is 81 data[81] is 81
+buffer[82] is 82 data[82] is 82
+buffer[83] is 83 data[83] is 83
+buffer[84] is 84 data[84] is 84
+buffer[85] is 85 data[85] is 85
+buffer[86] is 86 data[86] is 86
+buffer[87] is 87 data[87] is 87
+buffer[88] is 88 data[88] is 88
+buffer[89] is 89 data[89] is 89
+buffer[90] is 90 data[90] is 90
+buffer[91] is 91 data[91] is 91
+buffer[92] is 92 data[92] is 92
+buffer[93] is 93 data[93] is 93
+buffer[94] is 94 data[94] is 94
+buffer[95] is 95 data[95] is 95
+buffer[96] is 96 data[96] is 96
+buffer[97] is 97 data[97] is 97
+buffer[98] is 98 data[98] is 98
+buffer[99] is 99 data[99] is 99
+buffer[100] is 100 data[100] is 100
+buffer[101] is 101 data[101] is 101
+buffer[102] is 102 data[102] is 102
+buffer[103] is 103 data[103] is 103
+buffer[104] is 104 data[104] is 104
+buffer[105] is 105 data[105] is 105
+buffer[106] is 106 data[106] is 106
+buffer[107] is 107 data[107] is 107
+buffer[108] is 108 data[108] is 108
+buffer[109] is 109 data[109] is 109
+buffer[110] is 110 data[110] is 110
+buffer[111] is 111 data[111] is 111
+buffer[112] is 112 data[112] is 112
+buffer[113] is 113 data[113] is 113
+buffer[114] is 114 data[114] is 114
+buffer[115] is 115 data[115] is 115
+buffer[116] is 116 data[116] is 116
+buffer[117] is 117 data[117] is 117
+buffer[118] is 118 data[118] is 118
+buffer[119] is 119 data[119] is 119
+buffer[120] is 120 data[120] is 120
+buffer[121] is 121 data[121] is 121
+buffer[122] is 122 data[122] is 122
+buffer[123] is 123 data[123] is 123
+buffer[124] is 124 data[124] is 124
+buffer[125] is 125 data[125] is 125
+buffer[126] is 126 data[126] is 126
+buffer[127] is 127 data[127] is 127
+buffer[128] is -128 data[128] is -128
+buffer[129] is -127 data[129] is -127
+buffer[130] is -126 data[130] is -126
+buffer[131] is -125 data[131] is -125
+buffer[132] is -124 data[132] is -124
+buffer[133] is -123 data[133] is -123
+buffer[134] is -122 data[134] is -122
+buffer[135] is -121 data[135] is -121
+buffer[136] is -120 data[136] is -120
+buffer[137] is -119 data[137] is -119
+buffer[138] is -118 data[138] is -118
+buffer[139] is -117 data[139] is -117
+buffer[140] is -116 data[140] is -116
+buffer[141] is -115 data[141] is -115
+buffer[142] is -114 data[142] is -114
+buffer[143] is -113 data[143] is -113
+buffer[144] is -112 data[144] is -112
+buffer[145] is -111 data[145] is -111
+buffer[146] is -110 data[146] is -110
+buffer[147] is -109 data[147] is -109
+buffer[148] is -108 data[148] is -108
+buffer[149] is -107 data[149] is -107
+buffer[150] is -106 data[150] is -106
+buffer[151] is -105 data[151] is -105
+buffer[152] is -104 data[152] is -104
+buffer[153] is -103 data[153] is -103
+buffer[154] is -102 data[154] is -102
+buffer[155] is -101 data[155] is -101
+buffer[156] is -100 data[156] is -100
+buffer[157] is -99 data[157] is -99
+buffer[158] is -98 data[158] is -98
+buffer[159] is -97 data[159] is -97
+buffer[160] is -96 data[160] is -96
+buffer[161] is -95 data[161] is -95
+buffer[162] is -94 data[162] is -94
+buffer[163] is -93 data[163] is -93
+buffer[164] is -92 data[164] is -92
+buffer[165] is -91 data[165] is -91
+buffer[166] is -90 data[166] is -90
+buffer[167] is -89 data[167] is -89
+buffer[168] is -88 data[168] is -88
+buffer[169] is -87 data[169] is -87
+buffer[170] is -86 data[170] is -86
+buffer[171] is -85 data[171] is -85
+buffer[172] is -84 data[172] is -84
+buffer[173] is -83 data[173] is -83
+buffer[174] is -82 data[174] is -82
+buffer[175] is -81 data[175] is -81
+buffer[176] is -80 data[176] is -80
+buffer[177] is -79 data[177] is -79
+buffer[178] is -78 data[178] is -78
+buffer[179] is -77 data[179] is -77
+buffer[180] is -76 data[180] is -76
+buffer[181] is -75 data[181] is -75
+buffer[182] is -74 data[182] is -74
+buffer[183] is -73 data[183] is -73
+buffer[184] is -72 data[184] is -72
+buffer[185] is -71 data[185] is -71
+buffer[186] is -70 data[186] is -70
+buffer[187] is -69 data[187] is -69
+buffer[188] is -68 data[188] is -68
+buffer[189] is -67 data[189] is -67
+buffer[190] is -66 data[190] is -66
+buffer[191] is -65 data[191] is -65
+buffer[192] is -64 data[192] is -64
+buffer[193] is -63 data[193] is -63
+buffer[194] is -62 data[194] is -62
+buffer[195] is -61 data[195] is -61
+buffer[196] is -60 data[196] is -60
+buffer[197] is -59 data[197] is -59
+buffer[198] is -58 data[198] is -58
+buffer[199] is -57 data[199] is -57
+buffer[200] is -56 data[200] is -56
+buffer[201] is -55 data[201] is -55
+buffer[202] is -54 data[202] is -54
+buffer[203] is -53 data[203] is -53
+buffer[204] is -52 data[204] is -52
+buffer[205] is -51 data[205] is -51
+buffer[206] is -50 data[206] is -50
+buffer[207] is -49 data[207] is -49
+buffer[208] is -48 data[208] is -48
+buffer[209] is -47 data[209] is -47
+buffer[210] is -46 data[210] is -46
+buffer[211] is -45 data[211] is -45
+buffer[212] is -44 data[212] is -44
+buffer[213] is -43 data[213] is -43
+buffer[214] is -42 data[214] is -42
+buffer[215] is -41 data[215] is -41
+buffer[216] is -40 data[216] is -40
+buffer[217] is -39 data[217] is -39
+buffer[218] is -38 data[218] is -38
+buffer[219] is -37 data[219] is -37
+buffer[220] is -36 data[220] is -36
+buffer[221] is -35 data[221] is -35
+buffer[222] is -34 data[222] is -34
+buffer[223] is -33 data[223] is -33
+buffer[224] is -32 data[224] is -32
+buffer[225] is -31 data[225] is -31
+buffer[226] is -30 data[226] is -30
+buffer[227] is -29 data[227] is -29
+buffer[228] is -28 data[228] is -28
+buffer[229] is -27 data[229] is -27
+buffer[230] is -26 data[230] is -26
+buffer[231] is -25 data[231] is -25
+buffer[232] is -24 data[232] is -24
+buffer[233] is -23 data[233] is -23
+buffer[234] is -22 data[234] is -22
+buffer[235] is -21 data[235] is -21
+buffer[236] is -20 data[236] is -20
+buffer[237] is -19 data[237] is -19
+buffer[238] is -18 data[238] is -18
+buffer[239] is -17 data[239] is -17
+buffer[240] is -16 data[240] is -16
+buffer[241] is -15 data[241] is -15
+buffer[242] is -14 data[242] is -14
+buffer[243] is -13 data[243] is -13
+buffer[244] is -12 data[244] is -12
+buffer[245] is -11 data[245] is -11
+buffer[246] is -10 data[246] is -10
+buffer[247] is -9 data[247] is -9
+buffer[248] is -8 data[248] is -8
+buffer[249] is -7 data[249] is -7
+buffer[250] is -6 data[250] is -6
+buffer[251] is -5 data[251] is -5
+buffer[252] is -4 data[252] is -4
+buffer[253] is -3 data[253] is -3
+buffer[254] is -2 data[254] is -2
+buffer[255] is -1 data[255] is -1
+buffer[256] is 0 data[256] is 0
+buffer[257] is 1 data[257] is 1
+buffer[258] is 2 data[258] is 2
+buffer[259] is 3 data[259] is 3
+buffer[260] is 4 data[260] is 4
+buffer[261] is 5 data[261] is 5
+buffer[262] is 6 data[262] is 6
+buffer[263] is 7 data[263] is 7
+buffer[264] is 8 data[264] is 8
+buffer[265] is 9 data[265] is 9
+buffer[266] is 10 data[266] is 10
+buffer[267] is 11 data[267] is 11
+buffer[268] is 12 data[268] is 12
+buffer[269] is 13 data[269] is 13
+buffer[270] is 14 data[270] is 14
+buffer[271] is 15 data[271] is 15
+buffer[272] is 16 data[272] is 16
+buffer[273] is 17 data[273] is 17
+buffer[274] is 18 data[274] is 18
+buffer[275] is 19 data[275] is 19
+buffer[276] is 20 data[276] is 20
+buffer[277] is 21 data[277] is 21
+buffer[278] is 22 data[278] is 22
+buffer[279] is 23 data[279] is 23
+buffer[280] is 24 data[280] is 24
+buffer[281] is 25 data[281] is 25
+buffer[282] is 26 data[282] is 26
+buffer[283] is 27 data[283] is 27
+buffer[284] is 28 data[284] is 28
+buffer[285] is 29 data[285] is 29
+buffer[286] is 30 data[286] is 30
+buffer[287] is 31 data[287] is 31
+buffer[288] is 32 data[288] is 32
+buffer[289] is 33 data[289] is 33
+buffer[290] is 34 data[290] is 34
+buffer[291] is 35 data[291] is 35
+buffer[292] is 36 data[292] is 36
+buffer[293] is 37 data[293] is 37
+buffer[294] is 38 data[294] is 38
+buffer[295] is 39 data[295] is 39
+buffer[296] is 40 data[296] is 40
+buffer[297] is 41 data[297] is 41
+buffer[298] is 42 data[298] is 42
+buffer[299] is 43 data[299] is 43
+buffer[300] is 44 data[300] is 44
+buffer[301] is 45 data[301] is 45
+buffer[302] is 46 data[302] is 46
+buffer[303] is 47 data[303] is 47
+buffer[304] is 48 data[304] is 48
+buffer[305] is 49 data[305] is 49
+buffer[306] is 50 data[306] is 50
+buffer[307] is 51 data[307] is 51
+buffer[308] is 52 data[308] is 52
+buffer[309] is 53 data[309] is 53
+buffer[310] is 54 data[310] is 54
+buffer[311] is 55 data[311] is 55
+buffer[312] is 56 data[312] is 56
+buffer[313] is 57 data[313] is 57
+buffer[314] is 58 data[314] is 58
+buffer[315] is 59 data[315] is 59
+buffer[316] is 60 data[316] is 60
+buffer[317] is 61 data[317] is 61
+buffer[318] is 62 data[318] is 62
+buffer[319] is 63 data[319] is 63
+buffer[320] is 64 data[320] is 64
+buffer[321] is 65 data[321] is 65
+buffer[322] is 66 data[322] is 66
+buffer[323] is 67 data[323] is 67
+buffer[324] is 68 data[324] is 68
+buffer[325] is 69 data[325] is 69
+buffer[326] is 70 data[326] is 70
+buffer[327] is 71 data[327] is 71
+buffer[328] is 72 data[328] is 72
+buffer[329] is 73 data[329] is 73
+buffer[330] is 74 data[330] is 74
+buffer[331] is 75 data[331] is 75
+buffer[332] is 76 data[332] is 76
+buffer[333] is 77 data[333] is 77
+buffer[334] is 78 data[334] is 78
+buffer[335] is 79 data[335] is 79
+buffer[336] is 80 data[336] is 80
+buffer[337] is 81 data[337] is 81
+buffer[338] is 82 data[338] is 82
+buffer[339] is 83 data[339] is 83
+buffer[340] is 84 data[340] is 84
+buffer[341] is 85 data[341] is 85
+buffer[342] is 86 data[342] is 86
+buffer[343] is 87 data[343] is 87
+buffer[344] is 88 data[344] is 88
+buffer[345] is 89 data[345] is 89
+buffer[346] is 90 data[346] is 90
+buffer[347] is 91 data[347] is 91
+buffer[348] is 92 data[348] is 92
+buffer[349] is 93 data[349] is 93
+buffer[350] is 94 data[350] is 94
+buffer[351] is 95 data[351] is 95
+buffer[352] is 96 data[352] is 96
+buffer[353] is 97 data[353] is 97
+buffer[354] is 98 data[354] is 98
+buffer[355] is 99 data[355] is 99
+buffer[356] is 100 data[356] is 100
+buffer[357] is 101 data[357] is 101
+buffer[358] is 102 data[358] is 102
+buffer[359] is 103 data[359] is 103
+buffer[360] is 104 data[360] is 104
+buffer[361] is 105 data[361] is 105
+buffer[362] is 106 data[362] is 106
+buffer[363] is 107 data[363] is 107
+buffer[364] is 108 data[364] is 108
+buffer[365] is 109 data[365] is 109
+buffer[366] is 110 data[366] is 110
+buffer[367] is 111 data[367] is 111
+buffer[368] is 112 data[368] is 112
+buffer[369] is 113 data[369] is 113
+buffer[370] is 114 data[370] is 114
+buffer[371] is 115 data[371] is 115
+buffer[372] is 116 data[372] is 116
+buffer[373] is 117 data[373] is 117
+buffer[374] is 118 data[374] is 118
+buffer[375] is 119 data[375] is 119
+buffer[376] is 120 data[376] is 120
+buffer[377] is 121 data[377] is 121
+buffer[378] is 122 data[378] is 122
+buffer[379] is 123 data[379] is 123
+buffer[380] is 124 data[380] is 124
+buffer[381] is 125 data[381] is 125
+buffer[382] is 126 data[382] is 126
+buffer[383] is 127 data[383] is 127
+buffer[384] is -128 data[384] is -128
+buffer[385] is -127 data[385] is -127
+buffer[386] is -126 data[386] is -126
+buffer[387] is -125 data[387] is -125
+buffer[388] is -124 data[388] is -124
+buffer[389] is -123 data[389] is -123
+buffer[390] is -122 data[390] is -122
+buffer[391] is -121 data[391] is -121
+buffer[392] is -120 data[392] is -120
+buffer[393] is -119 data[393] is -119
+buffer[394] is -118 data[394] is -118
+buffer[395] is -117 data[395] is -117
+buffer[396] is -116 data[396] is -116
+buffer[397] is -115 data[397] is -115
+buffer[398] is -114 data[398] is -114
+buffer[399] is -113 data[399] is -113
+buffer[400] is -112 data[400] is -112
+buffer[401] is -111 data[401] is -111
+buffer[402] is -110 data[402] is -110
+buffer[403] is -109 data[403] is -109
+buffer[404] is -108 data[404] is -108
+buffer[405] is -107 data[405] is -107
+buffer[406] is -106 data[406] is -106
+buffer[407] is -105 data[407] is -105
+buffer[408] is -104 data[408] is -104
+buffer[409] is -103 data[409] is -103
+buffer[410] is -102 data[410] is -102
+buffer[411] is -101 data[411] is -101
+buffer[412] is -100 data[412] is -100
+buffer[413] is -99 data[413] is -99
+buffer[414] is -98 data[414] is -98
+buffer[415] is -97 data[415] is -97
+buffer[416] is -96 data[416] is -96
+buffer[417] is -95 data[417] is -95
+buffer[418] is -94 data[418] is -94
+buffer[419] is -93 data[419] is -93
+buffer[420] is -92 data[420] is -92
+buffer[421] is -91 data[421] is -91
+buffer[422] is -90 data[422] is -90
+buffer[423] is -89 data[423] is -89
+buffer[424] is -88 data[424] is -88
+buffer[425] is -87 data[425] is -87
+buffer[426] is -86 data[426] is -86
+buffer[427] is -85 data[427] is -85
+buffer[428] is -84 data[428] is -84
+buffer[429] is -83 data[429] is -83
+buffer[430] is -82 data[430] is -82
+buffer[431] is -81 data[431] is -81
+buffer[432] is -80 data[432] is -80
+buffer[433] is -79 data[433] is -79
+buffer[434] is -78 data[434] is -78
+buffer[435] is -77 data[435] is -77
+buffer[436] is -76 data[436] is -76
+buffer[437] is -75 data[437] is -75
+buffer[438] is -74 data[438] is -74
+buffer[439] is -73 data[439] is -73
+buffer[440] is -72 data[440] is -72
+buffer[441] is -71 data[441] is -71
+buffer[442] is -70 data[442] is -70
+buffer[443] is -69 data[443] is -69
+buffer[444] is -68 data[444] is -68
+buffer[445] is -67 data[445] is -67
+buffer[446] is -66 data[446] is -66
+buffer[447] is -65 data[447] is -65
+buffer[448] is -64 data[448] is -64
+buffer[449] is -63 data[449] is -63
+buffer[450] is -62 data[450] is -62
+buffer[451] is -61 data[451] is -61
+buffer[452] is -60 data[452] is -60
+buffer[453] is -59 data[453] is -59
+buffer[454] is -58 data[454] is -58
+buffer[455] is -57 data[455] is -57
+buffer[456] is -56 data[456] is -56
+buffer[457] is -55 data[457] is -55
+buffer[458] is -54 data[458] is -54
+buffer[459] is -53 data[459] is -53
+buffer[460] is -52 data[460] is -52
+buffer[461] is -51 data[461] is -51
+buffer[462] is -50 data[462] is -50
+buffer[463] is -49 data[463] is -49
+buffer[464] is -48 data[464] is -48
+buffer[465] is -47 data[465] is -47
+buffer[466] is -46 data[466] is -46
+buffer[467] is -45 data[467] is -45
+buffer[468] is -44 data[468] is -44
+buffer[469] is -43 data[469] is -43
+buffer[470] is -42 data[470] is -42
+buffer[471] is -41 data[471] is -41
+buffer[472] is -40 data[472] is -40
+buffer[473] is -39 data[473] is -39
+buffer[474] is -38 data[474] is -38
+buffer[475] is -37 data[475] is -37
+buffer[476] is -36 data[476] is -36
+buffer[477] is -35 data[477] is -35
+buffer[478] is -34 data[478] is -34
+buffer[479] is -33 data[479] is -33
+buffer[480] is -32 data[480] is -32
+buffer[481] is -31 data[481] is -31
+buffer[482] is -30 data[482] is -30
+buffer[483] is -29 data[483] is -29
+buffer[484] is -28 data[484] is -28
+buffer[485] is -27 data[485] is -27
+buffer[486] is -26 data[486] is -26
+buffer[487] is -25 data[487] is -25
+buffer[488] is -24 data[488] is -24
+buffer[489] is -23 data[489] is -23
+buffer[490] is -22 data[490] is -22
+buffer[491] is -21 data[491] is -21
+buffer[492] is -20 data[492] is -20
+buffer[493] is -19 data[493] is -19
+buffer[494] is -18 data[494] is -18
+buffer[495] is -17 data[495] is -17
+buffer[496] is -16 data[496] is -16
+buffer[497] is -15 data[497] is -15
+buffer[498] is -14 data[498] is -14
+buffer[499] is -13 data[499] is -13
+buffer[500] is -12 data[500] is -12
+buffer[501] is -11 data[501] is -11
+buffer[502] is -10 data[502] is -10
+buffer[503] is -9 data[503] is -9
+buffer[504] is -8 data[504] is -8
+buffer[505] is -7 data[505] is -7
+buffer[506] is -6 data[506] is -6
+buffer[507] is -5 data[507] is -5
+buffer[508] is -4 data[508] is -4
+buffer[509] is -3 data[509] is -3
+buffer[510] is -2 data[510] is -2
+buffer[511] is -1 data[511] is -1
+Exception in thread "Thread-5" java.lang.ArrayIndexOutOfBoundsException: 512
+	at FileSystem.write(FileSystem.java:302)
+	at Kernel.interrupt(Kernel.java:190)
+	at SysLib.write(SysLib.java:26)
+	at Test5.test10(Test5.java:301)
+	at Test5.run(Test5.java:39)
+	at java.lang.Thread.run(Thread.java:745)
+Exception in thread "Thread-0" java.lang.IllegalThreadStateException
+	at java.lang.Thread.start(Thread.java:705)
+	at Scheduler.run(Scheduler.java:168)
+^C]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ exit
 
-Script done on Mon 08 Jun 2015 01:00:22 AM PDT
+Script done on Tue 09 Jun 2015 12:25:50 AM PDT

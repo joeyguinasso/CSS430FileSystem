@@ -3,15 +3,15 @@ import java.util.*;
 public class FileTable{
 	private Vector<FileTableEntry> table;
 	private Directory dir;
-	private Vector<Inode> inodes;
+	//private Vector<Inode> inodes;
 	
 	public FileTable(Directory directory, int numInodes){
 		table = new Vector<FileTableEntry>();
 		dir = directory;
-		inodes = new Vector<Inode>();
-		for(short i = 0; i < numInodes; i++){
-			inodes.add( new Inode(i));
-		}
+		//inodes = new Vector<Inode>();
+		//for(short i = 0; i < numInodes; i++){
+		//	inodes.add( new Inode(i));
+		//}
 	}
 	
 	 public synchronized FileTableEntry falloc( String fname, String mode ) {
@@ -22,7 +22,7 @@ public class FileTable{
       	while(true){
       		iNumber = fname.equals("/") ? 0 : dir.namei(fname);		//set inumber to either 0 or the namei of filename
       		if(iNumber >= 0){										//As long as iNumber isn't less than zero, continue
-      			inode = inodes.get(iNumber);							//create a new Inode using out zero or higher number
+      			inode = new Inode(iNumber);							//create a new Inode using out zero or higher number
       			if(mode.compareTo("r") == 0){						//Check to see if we are flagged for read
       				if (inode.flag > 0) {							//If the flag is in use, wait, otherwise break out of loop
       					try {

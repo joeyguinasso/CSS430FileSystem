@@ -22,6 +22,11 @@ public class Inode{
 		int blockNum = 1 + iNumber / 16;
 		byte[] data = new byte[Disk.blockSize];
 		SysLib.rawread(blockNum, data);
+		
+		//for(int i = 0; i < 10; i++){
+		//	System.err.println("In INODE.constructor data["+i+"] is " + data[i]);
+		//}
+		
 		int offset = (iNumber % 16) * iNodeSize;
 		length = SysLib.bytes2int(data, offset);
 		offset +=4;
@@ -37,10 +42,40 @@ public class Inode{
 		indirect = SysLib.bytes2short(data, offset);
 	}
 	
-	public int toDisk(short iNumber){
+	public int toDisk(short var1) {
+        byte[] var2 = new byte[32];
+        byte var3 = 0;
+        SysLib.int2bytes(this.length, var2, var3);
+        int var6 = var3 + 4;
+        SysLib.short2bytes(this.count, var2, var6);
+        var6 += 2;
+        SysLib.short2bytes(this.flag, var2, var6);
+        var6 += 2;
+        int var4;
+        for(var4 = 0; var4 < 11; ++var4) {
+            SysLib.short2bytes(this.direct[var4], var2, var6);
+            var6 += 2;
+        }
+        SysLib.short2bytes(this.indirect, var2, var6);
+        var6 += 2;
+        var4 = 1 + var1 / 16;
+        byte[] var5 = new byte[512];
+        SysLib.rawread(var4, var5);
+        var6 = var1 % 16 * 32;
+        System.arraycopy(var2, 0, var5, var6, 32);
+        SysLib.rawwrite(var4, var5);
+		return 0;
+    }
+	
+	/*public int toDisk(short iNumber){
 		int blockNum = 1 + iNumber / 16;
 		byte[] data = new byte[Disk.blockSize];
 		SysLib.rawread(blockNum, data);
+		
+		//for(int i = 0; i < 10; i++){
+		//	System.err.println("In INODE.toDisk data["+i+"] is " + data[i]);
+		//}
+		
 		int offset = (iNumber % 16) * iNodeSize;
 		length = SysLib.bytes2int(data, offset);
 		offset +=4;
@@ -57,13 +92,7 @@ public class Inode{
 		SysLib.short2bytes(indirect, data, offset);
 		SysLib.rawwrite(blockNum, data);
 		return iNodeSize;
-	}
-
-	//i think itll just be the indirect???
-	//do we even need this?
-	public short getIndexBlockNumber(){
-		return indirect;
-	}
+	}*/
 
 	//
 	public boolean setIndexBlock( short indexBlockNumber ){

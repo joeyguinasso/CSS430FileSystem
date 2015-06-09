@@ -162,22 +162,26 @@ class Test5 extends Thread {
     byte[] tmpBuf = new byte[48];
     size = SysLib.read( fd, tmpBuf );
     if ( size != 48 ) {
-      SysLib.cout( "size = " + size + " (wrong)\n" );
+      SysLib.cout( "size = " + size + "(wrong)\n" );
       SysLib.close( fd );
       return false;
     }
-    for ( int i = 0; i < 16; i++ )
+    for ( int i = 0; i < 16; i++ ){
+		//SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf16[" + i+ "] = " + buf16[i] + "\n");
       if ( tmpBuf[i] != buf16[i] ) {
-        SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " (wrong)\n" );
+        SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + "buf16[" + i+ "] = " + buf16[i] +" (wrong)\n" );
         SysLib.close( fd );
         return false;
       }
-    for ( int i = 16; i < 48; i++ )
+	}
+    for ( int i = 16; i < 48; i++ ){
+	  //SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf32[" + (i - 16) + "] = " + buf32[i - 16] + "\n");
       if ( tmpBuf[i] != buf32[i - 16] ) {
-        SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " (wrong)\n" );
-        SysLib.close( fd );
-        return false;
+			SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " (wrong)\n" );
+			SysLib.close( fd );
+			return false;
       }
+	}
     SysLib.close( fd );
     SysLib.cout( "successfully completed\n" );
     return true;
