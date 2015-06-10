@@ -71,11 +71,31 @@ class SuperBlock {
 
 	//gets next free open block
 	public int nextFreeBlock(){
-		int freeBlock = this.freeList;
+		short freeBlock;
+		byte[] block;
+
+		// return -1 if there are no more free blocks
+		if (freeList < 0 || freeList > totalBlocks)
+			return -1;
+		// free block is given from free list
+		freeBlock = (short) freeList;
+		// create new empty block
+		block = new byte[Disk.blockSize];
+		// get the content of the freeList block
+		// wipe out the to block from the freeList
+		// with an empty block
+		SysLib.rawread(freeList, block);
+		SysLib.int2bytes(0, block, 0);
+		SysLib.rawwrite(freeList, block);
+
+		// free list becomes free block
+		freeList = SysLib.bytes2int(block, 0);
+		return freeBlock;
+		/*int freeBlock = this.freeList;
 		byte[] buffer = new byte[Disk.blockSize];
 		SysLib.rawread(freeBlock, buffer);
 		this.freeList = SysLib.bytes2short(buffer, 0);
-		return freeBlock;
+		return freeBlock;*/
 	}
 	
 	//Herb added this cuz reasons

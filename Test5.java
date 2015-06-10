@@ -254,12 +254,13 @@ class Test5 extends Thread {
     byte[] tmpBuf = new byte[48];
     SysLib.read( fd, tmpBuf );
 
-    for ( byte i = 0; i < 16; i++ )
+    for ( byte i = 0; i < 16; i++ ){
       if ( tmpBuf[i] != buf16[i] ) {
         SysLib.cout( "tmpBuf[" + i + "]=" + tmpBuf[i] + " (wrong)\n" );
         SysLib.close( fd );
         return false;
       }
+	}
     for ( byte i = 16; i < 24; i++ )
       if ( tmpBuf[i] != buf32[i-16] ) {
         SysLib.cout( "tmpBuf[" + i + "]=" + tmpBuf[i] + " (wrong)\n" );
@@ -348,7 +349,17 @@ class Test5 extends Thread {
   private boolean test13( ) {
     //.............................................."
     SysLib.cout( "13: append buf[32] to \"bothell\"..." );
-
+	
+	/*fd = SysLib.open( "bothell", "r" );
+	byte[] check = new byte[6688];
+	SysLib.read( fd, check );
+	for(int i = 0; i < check.length; i++){
+		SysLib.cout( "check[" + i + "] = " + check[i] + "\n" );
+	}
+	SysLib.close(fd);*/
+	
+	
+	
     fd = SysLib.open( "bothell", "a" );
     SysLib.write( fd, buf32 );
     SysLib.close( fd );
@@ -362,6 +373,7 @@ class Test5 extends Thread {
       return false;
     }
     for ( int i = 0; i < 6656; i++ ) {
+		//SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf6656[" + i+ "] = " + buf6656[i] + "\n");
       if ( tmpBuf[i] != buf6656[i] ) {
         SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf6656 = " +
            buf6656[i] + "\n" );
@@ -369,13 +381,15 @@ class Test5 extends Thread {
         return false;
       }
     }
-    for ( int i = 6656; i < 6688; i++ )
+    for ( int i = 6656; i < 6688; i++ ){
+		//SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf32[" + i+ "] = " + buf32[i-6656] + "\n");
       if ( tmpBuf[i] != buf32[i - 6656] ) {
         SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf32 = " +
            buf32[i - 6656] + "\n" );
         SysLib.close( fd );
         return false;
       }
+	}
     SysLib.close( fd );
     SysLib.cout( "successfully completed\n" );
     return true;
@@ -487,6 +501,7 @@ class Test5 extends Thread {
       return false;
     }
     SysLib.close( fd );
+	System.err.println("closed css430");
     SysLib.delete( "css430" );
     fd = SysLib.open( "css430", "r" );
     if ( fd != -1 ) {

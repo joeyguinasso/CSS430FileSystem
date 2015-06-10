@@ -42,7 +42,29 @@ public class Inode{
 		indirect = SysLib.bytes2short(data, offset);
 	}
 	
-	public int toDisk(short iNumber) {
+	public int toDisk( short iNumber ) {                  				// save to disk as the i-th inode
+    	  int blockNumber = 1 + iNumber / 16;						//set the block number, divisible by 16. Add 1 to keep out of superblock
+    	  byte[] data = new byte[Disk.blockSize];					//Buffer
+    	  SysLib.rawread(blockNumber, data);						//Read in the buffer
+    	  int offset = (iNumber % 16) * iNodeSize;					//Calculate the offset
+    	  SysLib.int2bytes(length, data, offset);					//Prepare the length	
+    	  offset += 4;	
+    	  SysLib.short2bytes(count, data, offset);					//Prepare the count
+    	  offset += 2;
+    	  SysLib.short2bytes(flag, data, offset);					//Prepare the flag
+    	  offset += 2;
+    	  
+    	  for (int i = 0; i < directSize; i++) {					//Set all direct pointers
+    		  SysLib.short2bytes(direct[i], data, offset);
+    		  offset += 2;
+    	  }
+    	  SysLib.short2bytes(indirect, data, offset);				//Set indirect pointer
+    	  
+    	  SysLib.rawwrite(blockNumber, data);
+    	  return iNodeSize;
+      }
+	
+	/*public int toDisk(short iNumber) {
 		// initialize the Inode to be added back to Disk
 		int offset, block;
 		byte[] data;
@@ -74,7 +96,7 @@ public class Inode{
 	
 	public int getOffset(int iNumber) {
 		return 1 + iNumber / 16;
-	}
+	}*/
 	
 	/*public int toDisk(short var1) {
         byte[] var2 = new byte[32];
@@ -150,16 +172,20 @@ public class Inode{
 	}
 
 	public short findTargetBlock(int seekptr){
-		if (seekptr > length) return -1;
+		//if (seekptr > length) return -1;
     	int ptr = seekptr/Disk.blockSize;
     	if (ptr < 11) {
-			//System.err.println("Returning direct");
+			//System.err.println("Returning direct "+ptr);
 			return direct[ptr];
 		}else{
-			//System.err.println("Returning indirect");
-			ptr -= 11;											
-    		byte[] data = new byte[Disk.blockSize];					
-			SysLib.rawread(indirect, data);							
+			//System.err.println("Returning indirect "+ptr);
+			ptr -= directSize;
+    		byte[] data = new byte[Disk.blockSize];	
+			//System.err.println("INODE READ FROM DISK IN FINDTARGETBLOCK");
+			//System.err.println("INDIRECT POINTER IS "+indirect);
+			//if(indirect < 0) indirect = 0;
+			//getIndirectBlock(ptr);
+			SysLib.rawread(indirect, data);	
 			short[] ptrs = new short[Disk.blockSize/2];				
 			for (int i = 0; i < data.length; i+=2) {					
 				ptrs[i/2] = SysLib.bytes2short(data, i);							

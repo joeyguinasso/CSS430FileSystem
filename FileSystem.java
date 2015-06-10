@@ -107,8 +107,7 @@ public class FileSystem{
 		if (fte == null)
 			return -1;
 		// mode must be read
-		if (fte.mode.equals("w+")
-				|| fte.mode.equals("a"))
+		if (fte.mode.equals("a"))
 			return -1;
 		// iNode cannot be null
 		if ((iNode = fte.inode) == null)
@@ -120,6 +119,7 @@ public class FileSystem{
 		synchronized (fte) {
 			// start at position pointed to by iNode's seek pointer
 			seekPtr = fte.seekPtr;
+			//System.err.println("seekPtr is before READING: "+seekPtr);
 			data = new byte[Disk.blockSize];
 			index = 0;
 			while (index < length) {
@@ -225,7 +225,7 @@ public class FileSystem{
 			//System.err.println("WRITE fte.seekPtr is before writing: "+ fte.seekPtr);
 			// start at position pointed to by inode's seek pointer
 			// append should set seek pointer to EOF
-			seekPtr = fte.mode.equals("a") ? seek(fte, 4, SEEK_END): fte.seekPtr;
+			seekPtr = fte.mode.equals("a") ? seek(fte, 0, SEEK_END): fte.seekPtr;
 			//if(fte.mode.equals("a")) System.err.println("WRITE fte.seekPtr is for APPEND: "+ fte.seekPtr);
 			iNode.flag = 1; // set flag to write
 			index = 0;
@@ -234,6 +234,15 @@ public class FileSystem{
 
 				// byte offset-- 0 is a new block
 				offset = seekPtr % Disk.blockSize;
+				/*if(fte.mode.equals("a")){
+					if(seekPtr < Disk.blockSize){
+						block = iNode.findTargetBlock(offset);
+					}else{
+						block = iNode.findTargetBlock(offset);
+					}
+				}else{
+					block = iNode.findTargetBlock(offset);
+				}*/
 				//System.err.println("seekPtr is set at "+seekPtr);
 				// bytes available
 				available = Disk.blockSize - offset;
@@ -243,10 +252,12 @@ public class FileSystem{
 				wLength = Math.min(available, remaining);
 
 				// get next block from iNode
-				if ((block = iNode.findTargetBlock(offset)) == -1) {
+				block = iNode.findTargetBlock(offset);
+				
+				if (block == -1) {
 					// if ERROR, file is out of memory, so get a new block
 					if ((block = (short) superblock.nextFreeBlock()) == -1) {
-						//Kernel.report("Write failure: Out of memory!");
+						System.err.println("Write failure: Out of memory!");
 						iNode.flag = 0;
 						break;
 						// return ERROR; // no more free blocks
@@ -255,22 +266,20 @@ public class FileSystem{
 					if (iNode.setTargetBlock(seekPtr, block) == false) {
 						// out of bounds, try to get a new indirect block
 						if (iNode.setIndexBlock(block) == false) {
-							//Kernel.report("Write failure: Failed to set index block "
-							//		+ block);
+							System.err.println("Write failure: Failed to set index block "+ block);
 							iNode.flag = 0;
 							break;
 							// return ERROR;
 						}
 						// index block set, get a new block
 						if ((block = (short) superblock.nextFreeBlock()) == -1) {
-							//Kernel.report("Write failure: Out of memory!");
+							System.err.println("Write failure: Out of memory!");
 							iNode.flag = 0;
 							break;
 							// return ERROR; // no more free blocks
 						}
 						if (iNode.setTargetBlock(seekPtr, block) == false) {
-							//Kernel.report("Write failure: Failed to set target block "
-							//		+ block);
+							System.err.println("Write failure: Failed to set target block "+ block);
 							iNode.flag = 0;
 							break;
 							// return ERROR;
@@ -290,6 +299,7 @@ public class FileSystem{
 				}
 
 				SysLib.rawread(block, data);
+				//System.err.println("FILESYSTEM READ FROM DISK IN WRITE");
 
 				// copy data to buffer
 				// source, source position, destination, destination position,
@@ -297,13 +307,14 @@ public class FileSystem{
 				//System.err.println("wLength of copy is "+wLength);
 				//System.err.println("buffer.length of copy is "+buffer.length);
 				System.arraycopy(buffer, index, data, offset, wLength);
+				//if(fte.mode.equals("a")) System.err.println("BLOCK IS: "+ block);
 				// write data to disk
 				/*System.err.println("AFTER COPY FROM BUFFER TO DATA");
 				for(int i = 0; i < wLength; i++){
 					if(fte.mode.equals("a") && buffer[i] == data[i + offset]){
 						System.err.println("buffer[" + (i) +"] is "+buffer[(i)] + " data[" + (i+offset) + "] is "+data[i+offset]);
-					}else if(!fte.mode.equals("a") && buffer[i] == data[i]){
-						System.err.println("buffer[" + i +"] is "+buffer[i] + " data[" + i + "] is "+data[i]);
+					}/*else if(!fte.mode.equals("a")){
+						System.err.println("buffer[" + i +"] is "+buffer[i] + " data[" + (i) + "] is "+data[(i)]);
 					}
 				}
 				System.err.println("AFTER CHECKING COPY FROM BUFFER TO DATA");*/
@@ -334,30 +345,6 @@ public class FileSystem{
 		// if error was not returned, all bytes wrote successfully-- return
 		// length
 		return index;
-		/*if(fte == null) return -1;
-		if(fte.mode == "r") return -1;
-		if(fte.inode == null) return -1;
-		if(fte.inode.flag == 1) return -1; //if its in use do not write to it.
-		int block = fte.seekPtr + buffer.length - fte.inode.length;
-		while(block > 0) {
-			block -= Disk.blockSize;
-			addBlock(fte.inode);
-		}
-		int i = 0;
-		do {
-			byte[] oBlock = new byte[Disk.blockSize];
-			int offset = fte.seekPtr%Disk.blockSize;
-			int write = Math.min(Disk.blockSize - offset, buffer.length - i);
-			int current = fte.inode.findTargetBlock(fte.seekPtr);
-			//System.err.println("current is "+ current);
-			fte.seekPtr += write;
-			if(fte.seekPtr > fte.inode.length) fte.inode.length = fte.seekPtr;
-			SysLib.rawread(current, oBlock);
-			System.arraycopy(buffer, i, oBlock, offset, write);
-			i += write;
-			SysLib.rawwrite(current,oBlock);
-		} while(i != buffer.length);
-		return i;*/
 	}
 
 	private int addBlock(Inode inode){
@@ -394,6 +381,7 @@ public class FileSystem{
 			if(fte.seekPtr < 0){
 				fte.seekPtr = 0;
 			}
+			//System.err.println("AFTER SEEK WAS CALLED, SEEKPTR IS: "+ fte.seekPtr);
 			return fte.seekPtr;
 	}
 	
