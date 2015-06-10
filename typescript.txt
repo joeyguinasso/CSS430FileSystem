@@ -1,0 +1,51 @@
+Script started on Wed 10 Jun 2015 03:07:29 AM PDT
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ java Boot
+threadOS ver 1.0:
+Type ? for help
+threadOS: a new thread (thread=Thread[Thread-3,2,main] tid=0 pid=-1)
+-->l Test5
+l Test5
+threadOS: a new thread (thread=Thread[Thread-5,2,main] tid=1 pid=0)
+1: format( 48 )...................Superblock synchronized
+successfully completed
+Correct behavior of format......................2
+2: fd = open( "css430", "w+" )....successfully completed
+Correct behavior of open........................2
+3: size = write( fd, buf[16] )....successfully completed
+Correct behavior of writing a few bytes.........2
+4: close( fd )....................successfully completed
+Correct behavior of close.......................2
+5: reopen and read from "css430"..successfully completed
+Correct behavior of reading a few bytes.........2
+6: append buf[32] to "css430".....successfully completed
+Correct behavior of appending a few bytes.......1
+7: seek and read from "css430"....successfully completed
+Correct behavior of seeking in a small file.....1
+8: open "css430" with w+..........successfully completed
+Correct behavior of read/writing a small file.0.5
+9: fd = open( "bothell", "w" )....successfully completed
+10: size = write( fd, buf[6656] ).successfully completed
+Correct behavior of writing a lot of bytes....0.5
+11: close( fd )....................successfully completed
+12: reopen and read from "bothell"successfully completed
+Correct behavior of reading a lot of bytes....0.5
+13: append buf[32] to "bothell"...buf[0] = 16 buf6656 = 0
+14: seek and read from "bothell"...seek(fd,512*11,0) contents 16(wrong)
+15: open "bothell" with w+.........tmpBuf[0]=21 (wrong)
+16: delete("css430")..............closed css430
+successfully completed
+Correct behavior of delete....................0.5
+17: create uwb0-29 of 512*13......successfully completed
+Correct behavior of creating over 40 files ...0.5
+18: uwb0 read b/w Test5 & Test6...
+threadOS: a new thread (thread=Thread[Thread-7,2,main] tid=2 pid=1)
+Test6.java: fd = 3successfully completed
+Correct behavior of parent/child reading the file...0.5
+19: uwb1 written by Test6.java...Test6.java terminated
+Correct behavior of two fds to the same file..0.5
+Test completed
+-->q
+q
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ exit
+
+Script done on Wed 10 Jun 2015 03:08:29 AM PDT
