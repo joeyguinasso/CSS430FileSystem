@@ -11,7 +11,6 @@ class SuperBlock {
 		byte[] superBlock = new byte[Disk.blockSize];
 		SysLib.rawread(0, superBlock);
 		this.totalBlocks = SysLib.bytes2int(superBlock, 0);
-		//System.err.println("SuperBlock totalBlocks is "+totalBlocks);
 		this.totalInodes = SysLib.bytes2int(superBlock, 4);
 		this.freeList = SysLib.bytes2int(superBlock, 8);
 		//if correct info
@@ -39,7 +38,6 @@ class SuperBlock {
     	totalInodes = numInodes;												
     	totalBlocks = SysLib.bytes2int(buffer, 0);							
     	freeList = 1;
-		//System.err.println("In FORMAT SuperBlock totalBlocks is "+totalBlocks);
     	for (short i = 1; i < totalBlocks; i++) {								
 			if (i == totalBlocks - 1){											
 				SysLib.short2bytes((short)-1, buffer, 0);
@@ -57,7 +55,6 @@ class SuperBlock {
     	return 0;
     }
 	
-
 	//save to superblock
 	public void sync() {
 		byte[] buffer = new byte[Disk.blockSize];
@@ -91,16 +88,11 @@ class SuperBlock {
 		// free list becomes free block
 		freeList = SysLib.bytes2int(block, 0);
 		return freeBlock;
-		/*int freeBlock = this.freeList;
-		byte[] buffer = new byte[Disk.blockSize];
-		SysLib.rawread(freeBlock, buffer);
-		this.freeList = SysLib.bytes2short(buffer, 0);
-		return freeBlock;*/
 	}
 	
-	//Herb added this cuz reasons
+	
 	public boolean retBlock(int block){
-		//if(block < 0 || block > totalBlocks) return false;
+		if(block < 0 || block > totalBlocks) return false;
 		byte[] retblk = new byte[Disk.blockSize];
 		SysLib.short2bytes((short)freeList,retblk,0);
 		SysLib.rawwrite(block, retblk);

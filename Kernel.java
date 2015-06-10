@@ -134,17 +134,12 @@ public class Kernel
 					switch ( param ) {
 					case STDIN:
 						try {
-							String s = input.readLine(); // read a keyboard input
+							String s = input.readLine(); 
 							if ( s == null ) {
 								return ERROR;
 							}
-							// prepare a read buffer
 							StringBuffer buf = ( StringBuffer )args;
-
-							// append the keyboard intput to this read buffer
 							buf.append( s ); 
-
-							// return the number of chars read from keyboard
 							return s.length( );
 						} catch ( IOException e ) {
 							System.out.println( e );
@@ -155,13 +150,13 @@ public class Kernel
 						System.out.println( "threaOS: caused read errors" );
 						return ERROR;
 					}
-				} else {													//If the parameters aren't 0-2, check for 3-31. If so, go into this statement
-					if (param > 31 || param < 3)							//If outside 3-31, return error
+				} else {													
+					if (param > 31 || param < 3)							
 						return ERROR;
-					if((myTcb = scheduler.getMyTcb()) != null){				//Set MyTcb. As long as it doesn't return null, continue
-						FileTableEntry fte = myTcb.getFtEnt(param);			//Create a new filetableEntry
-						if (fte != null)									//As long as it isn't null
-							return fs.read( fte, (byte[])args );			//Call read and return the result
+					if((myTcb = scheduler.getMyTcb()) != null){				
+						FileTableEntry fte = myTcb.getFtEnt(param);			
+						if (fte != null)									
+							return fs.read( fte, (byte[])args );			
 						else 
 							return ERROR;
 					}
@@ -181,13 +176,13 @@ public class Kernel
 						System.err.print( (String)args );
 						break;
 					}
-				} else {													//If write is between 3-31, enter here
-					if (param > 31 || param < 0)							//Catch outliers
+				} else {													
+					if (param > 31 || param < 0)							
 						return ERROR;
-					if((myTcb = scheduler.getMyTcb()) != null){				//Set myTcb. If not null, continue.
-						FileTableEntry fte = myTcb.getFtEnt(param);			//Create a new filetableEntry
-						if (fte!=null)										//If it's not null
-							return fs.write( fte, (byte[])args );			//Write 
+					if((myTcb = scheduler.getMyTcb()) != null){				
+						FileTableEntry fte = myTcb.getFtEnt(param);			
+						if (fte!=null)										
+							return fs.write( fte, (byte[])args );			 
 						else
 							return ERROR;
 					}
@@ -205,24 +200,23 @@ public class Kernel
 				cache.flush( );
 				return OK;
 			case OPEN:    // to be implemented in project
-				if((myTcb = scheduler.getMyTcb()) != null){					//Set MyTcb
-					String[] s = (String[])args;							//Create a string out of the args passed in
-					FileTableEntry ent = fs.open(s[0], s[1]);				//Open the filetableEntry
+				if((myTcb = scheduler.getMyTcb()) != null){					
+					String[] s = (String[])args;							
+					FileTableEntry ent = fs.open(s[0], s[1]);				
 					if (ent == null)
 						return ERROR;
-					int fd = myTcb.getFd(ent);								//Get the file descriptor
+					int fd = myTcb.getFd(ent);								
 					if (fd == -1) {
-						fs.close(ent);										//Close the filetableEntry
+						fs.close(ent);										
 					}
-					return fd;												//Return the file descriptor
+					return fd;												
 				}
 				return ERROR;
 
 			case CLOSE:   // to be implemented in project
-				if ((myTcb = scheduler.getMyTcb()) != null) {				//Get MyTcb
-					FileTableEntry fte = myTcb.returnFd(param);				//Create the FiletableEntry
-					// his code returns a boolean 
-					if (fs.close(fte) == true) {								//close the entry
+				if ((myTcb = scheduler.getMyTcb()) != null) {				
+					FileTableEntry fte = myTcb.returnFd(param);				
+					if (fs.close(fte) == true) {								
 						return 0;
 					} else {
 						return -1;
@@ -232,31 +226,31 @@ public class Kernel
 
 
 			case SIZE:    // to be implemented in project
-				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
-					FileTableEntry fte = myTcb.getFtEnt(param);										//the fd comes from the parameters
-					int size = fs.fsize(fte);							//Call to find size on the file descriptors
-					return size;											//Return the size
+				if((myTcb = scheduler.getMyTcb()) != null ){				
+					FileTableEntry fte = myTcb.getFtEnt(param);										
+					int size = fs.fsize(fte);							
+					return size;											
 				}
 				return ERROR;
 
 			case SEEK:    // to be implemented in project
-				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
-					int[] arg = (int[])args;								//Cast args to int array
-					FileTableEntry fte = myTcb.getFtEnt(arg[0]);			//Create the filetableEntry
-					return fs.seek(fte, arg[1], arg[2]);					//Call seek with args and fte
+				if((myTcb = scheduler.getMyTcb()) != null ){				
+					int[] arg = (int[])args;								
+					FileTableEntry fte = myTcb.getFtEnt(arg[0]);			
+					return fs.seek(fte, arg[1], arg[2]);					
 				}
 				return ERROR;
 
 			case FORMAT:  // to be implemented in project
-				if((myTcb = scheduler.getMyTcb()) != null ){				//Get MyTcb
-					String[] s = (String[])args;							//Cast args to string array
-					return (fs.format(param) == true) ? OK:ERROR;								//Call format with parameter
+				if((myTcb = scheduler.getMyTcb()) != null ){				
+					String[] s = (String[])args;							
+					return (fs.format(param) == true) ? OK:ERROR;								
 				}
 				return ERROR;
 
 			case DELETE:  // to be implemented in project
-				if((myTcb = scheduler.getMyTcb()) != null ){				//Get Mycb
-					return (fs.delete((String)args) == true) ? OK:ERROR;	//Call delete with args and return error or success
+				if((myTcb = scheduler.getMyTcb()) != null ){				
+					return (fs.delete((String)args) == true) ? OK:ERROR;	
 				}
 				return ERROR;
 			}

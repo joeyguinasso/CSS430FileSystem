@@ -2,8 +2,6 @@ import java.util.*;
 
 public class Directory{
 	private static int maxChars = 30;
-	
-	//directory entries
 	private int fsize[];
 	private char fnames[][];
 	
@@ -51,9 +49,7 @@ public class Directory{
 	
 	public short ialloc(String filename){
 		if(filename.length() > maxChars){
-			//WARNING
-			//check to cast to int where its called
-			return -1; //filename too large
+			return -1; 
 		}
 		
 		for(int i = 0; i < fsize.length; i++){
@@ -63,7 +59,7 @@ public class Directory{
 				return (short) i;
 			}	
 		}
-		return -1; //ran out of space
+		return -1; 
 	}
 	
 	public boolean ifree(short iNumber){
@@ -73,7 +69,6 @@ public class Directory{
 		if(fsize[iNumber] == 0){
 			return false;
 		}
-		//WARNING name is not removed, should be overwritten
 		fsize[iNumber] = 0; 
 		return true;
 	}
@@ -91,103 +86,4 @@ public class Directory{
 		}
 		return -1;
 	}
-}/*
-public class Directory{
-	private static int maxChars = 30;
-	
-	//directory entries
-	private int fsize[];
-	private String[] name;
-	private HashMap<String, Integer> nameMap = new HashMap<String, Integer>();
-	//private char fnames[][];
-	
-	public Directory(int maxInumber){
-		
-		fsize = new int [maxInumber];
-		name = new String[maxInumber];
-		name[0] = "/";
-		fsize[0] = 1;
-		nameMap.put(name[0],0);
-	}
-	
-	public int bytes2directory(byte data[]){
-		int offset = 0;
-		int sum = 0;
-		for(int i = 0; i < fsize.length; offset++){
-			fsize[i] = data[i];
-			sum += fsize[i];
-		}
-		String names = new String(data, offset, sum);
-		int ptr = 0;
-		for(int i = 0; i < fsize.length; i++){
-			if(fsize[i] != 0){
-				name[i] = new String(names.substring(ptr,ptr+fsize[i]));
-				ptr += fsize[i];
-			}
-		}
-		return 0;
-	}
-	
-	public byte[] directory2bytes() {
-       int sum = 0;
-	   for(int i = 0; i < fsize.length; i++){
-		   sum += fsize[i];
-	   }
-	   byte[] buf = new byte[fsize.length + sum];
-	   for(int i = 0; i < fsize.length;i++){
-		   buf[i] = (byte) fsize[i];
-	   }
-	   String names = "";
-	   for(String s: name){
-		   if(s != null){
-				names.concat(s);
-		   }
-	   }
-	   byte[] nb = names.getBytes();
-	   for(int i = 0; i < nb.length;i++){
-		   System.err.println("i = "+i);
-		   buf[i+fsize.length] = nb[i];
-	   }
-	   
-	   int f = SysLib.open("/", "w");
-	   SysLib.write(f, buf);
-	   return buf;
-    }
-	
-	public short ialloc(String filename){
-		if(filename.length() > maxChars){
-			//WARNING
-			//check to cast to int where its called
-			return -1; //filename too large
-		}
-		short i;
-		for(i = 0; i < fsize.length;i++){
-			if(fsize[i] == 0){
-				fsize[i] = (byte) filename.length();
-				name[i] = filename;
-				nameMap.put(filename, (int) i);
-				break;
-			}
-		}
-		return i;
-	}
-	
-	public boolean ifree(short iNumber){
-		if(fsize.length < iNumber || iNumber < 0){
-			return false;
-		}
-		fsize[iNumber] = 0;
-		nameMap.remove(name[iNumber]);
-		name[iNumber] = null;
-		return true;
-	}
-	
-	public short namei(String filename){
-		Integer inum = nameMap.get(filename);
-		if(inum != null){
-			return (short) inum.intValue();
-		}else{
-			return -1;
-		}
-	}
-}*/
+}
