@@ -118,12 +118,16 @@ public class FileSystem{
 				available = Disk.blockSize - offset;
 				remaining = length - index;
 				rLength = Math.min(available, remaining);
-
-				if ((block = iNode.findTargetBlock(offset)) == -1) {
+				block = iNode.findTargetBlock(offset, seekPtr);
+				
+				if (block == -1) {
+					System.err.println("Failed to find target. block "+block);
+					System.err.println("seekPtr is "+seekPtr);
 					return -1;
 				}
 
 				if (block < 0 || block >= superblock.totalBlocks) {
+					System.err.println("Block out of bounds"+block);
 					break;
 				}
 
@@ -162,9 +166,7 @@ public class FileSystem{
 				available = Disk.blockSize - offset;
 				remaining = length - index;
 				wLength = Math.min(available, remaining);
-
-				block = iNode.findTargetBlock(offset);
-				
+				block = iNode.findTargetBlock(offset, seekPtr);
 				if (block == -1) {
 					if ((block = (short) superblock.nextFreeBlock()) == -1) {
 						System.err.println("Write failure: Out of memory!");
@@ -201,7 +203,6 @@ public class FileSystem{
 
 				SysLib.rawread(block, data);
 				System.arraycopy(buffer, index, data, offset, wLength);
-				System.err.println("AFTER CHECKING COPY FROM BUFFER TO DATA");*/
 				SysLib.rawwrite(block, data);
 				index += wLength;
 				seekPtr += wLength;
@@ -216,17 +217,6 @@ public class FileSystem{
 			iNode.toDisk(fte.iNumber);
 		}
 		return index;
-	}
-
-	private int addBlock(Inode inode){
-		int nBlock = superblock.nextFreeBlock();
-		int retVal = inode.addBlock(nBlock);
-		if(retVal == -2){
-			int nIndirectBlock = superblock.nextFreeBlock();
-			inode.getIndirectBlock(nBlock);
-			retVal =inode.direct[nBlock] = -1;
-		}
-		return retVal;
 	}
 	
 	public synchronized boolean delete(String filename){
@@ -265,7 +255,7 @@ public class FileSystem{
 		if(inode.count > 1) return false;
 		
 		for(int i = 0; i < inode.length; i++ ){
-			block = inode.findTargetBlock(i);
+			block = inode.findTargetBlock(i,i);
 			if(block == -1) continue;
 			if(superblock.retBlock(block)){
 				if(inode.setTargetBlock(block, (short) -1) == false){

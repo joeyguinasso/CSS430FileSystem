@@ -351,7 +351,7 @@ class Test5 extends Thread {
     fd = SysLib.open( "bothell", "a" );
     SysLib.write( fd, buf32 );
     SysLib.close( fd );
-
+    //System.out.println("FINISHED APPENDING");
     fd = SysLib.open( "bothell", "r" );
     byte[] tmpBuf = new byte[6688];
     size = SysLib.read( fd, tmpBuf );
@@ -361,8 +361,10 @@ class Test5 extends Thread {
       return false;
     }
     for ( int i = 0; i < 6656; i++ ) {
+		//SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf6656[" + i + "] = " +
+        //   buf6656[i] + "\n" );
       if ( tmpBuf[i] != buf6656[i] ) {
-        SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf6656 = " +
+        SysLib.cout( "Fail 1 buf[" + i + "] = " + tmpBuf[i] + " buf6656[" + i + "] = " +
            buf6656[i] + "\n" );
         SysLib.close( fd );
         return false;
@@ -370,7 +372,7 @@ class Test5 extends Thread {
     }
     for ( int i = 6656; i < 6688; i++ ){
       if ( tmpBuf[i] != buf32[i - 6656] ) {
-        SysLib.cout( "buf[" + i + "] = " + tmpBuf[i] + " buf32 = " +
+        SysLib.cout( "Fail 2 buf[" + i + "] = " + tmpBuf[i] + " buf32[" + i + "] = " +
            buf32[i - 6656] + "\n" );
         SysLib.close( fd );
         return false;

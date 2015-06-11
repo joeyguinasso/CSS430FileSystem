@@ -1,5 +1,10 @@
-Script started on Wed 10 Jun 2015 03:07:29 AM PDT
-]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ java Boot
+Script started on Wed 10 Jun 2015 09:31:30 PM PDT
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ java Bootc FileSystem.java SuperBlock.java FileTable.java  Directory.java Inode.java SuperBlock.java SysLib.java FileTableEntry.java Kernell.java Test5.java
+Note: Kernel.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ javac FileSystem.java SuperBlock.java FileTable.java  Directory.java Inode.java SuperBlock.java SysLib.java FileTableEntry.java Kernell.java Test5.java[A[A]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ [C[C[C[C Boot[K
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
 threadOS ver 1.0:
 Type ? for help
 threadOS: a new thread (thread=Thread[Thread-3,2,main] tid=0 pid=-1)
@@ -29,9 +34,12 @@ Correct behavior of writing a lot of bytes....0.5
 11: close( fd )....................successfully completed
 12: reopen and read from "bothell"successfully completed
 Correct behavior of reading a lot of bytes....0.5
-13: append buf[32] to "bothell"...buf[0] = 16 buf6656 = 0
-14: seek and read from "bothell"...seek(fd,512*11,0) contents 16(wrong)
-15: open "bothell" with w+.........tmpBuf[0]=21 (wrong)
+13: append buf[32] to "bothell"...successfully completed
+Correct behavior of appending to a large file.0.5
+14: seek and read from "bothell"...successfully completed
+Correct behavior of seeking in a large file...0.5
+15: open "bothell" with w+.........successfully completed
+Correct behavior of read/writing a large file.0.5
 16: delete("css430")..............closed css430
 successfully completed
 Correct behavior of delete....................0.5
@@ -48,4 +56,4 @@ Test completed
 q
 ]0;herb@ubuntu: ~/Desktop/lab5herb@ubuntu:~/Desktop/lab5$ exit
 
-Script done on Wed 10 Jun 2015 03:08:29 AM PDT
+Script done on Wed 10 Jun 2015 09:32:39 PM PDT

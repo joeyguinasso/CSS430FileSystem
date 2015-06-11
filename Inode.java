@@ -80,21 +80,18 @@ public class Inode{
 		}
 	}
 
-	public short findTargetBlock(int seekptr){
-		if (seekptr > length) return -1;
-    	int ptr = seekptr/Disk.blockSize;
-    	if (ptr < 11) {
+	public short findTargetBlock(int offset, int seekptr){
+		int ptr = 0;
+		//if (seekptr > length) return -1;
+    	if((seekptr/Disk.blockSize) < 11) {
+			ptr = offset/Disk.blockSize;
 			return direct[ptr];
 		}else{
-			
-			ptr -= directSize;
+			ptr = seekptr/Disk.blockSize;
     		byte[] data = new byte[Disk.blockSize];	
+			getIndirectBlock(ptr);
 			SysLib.rawread(indirect, data);	
-			short[] ptrs = new short[Disk.blockSize/2];				
-			for (int i = 0; i < data.length; i+=2) {					
-				ptrs[i/2] = SysLib.bytes2short(data, i);							
-			}
-			return ptrs[ptr];
+			return (short) ptr;
 		}
 	}
 	//This is now a boolean. 
@@ -156,21 +153,5 @@ public class Inode{
 	
 	public void getIndirectBlock(int nBlock){
 		indirect = (short) nBlock;
-		//get indirect block
-		byte[] data = new byte[Disk.blockSize];
-		SysLib.rawread(indirect, data);
-		short[] indirects = new short[Disk.blockSize/2];
-		for(int i = 0; i < data.length; i+=2){
-			indirects[i/2] = SysLib.bytes2short(data,i);
-		}
-		
-		for(int i = 0; i < indirects.length; i++){
-			indirects[i] = -1;
-		}
-		byte[] b = new byte[Disk.blockSize];
-		for(int j = 0, k = 0; j < b.length; k++, j+=2){
-			SysLib.short2bytes(indirects[k],b,j);
-		}
-		SysLib.rawwrite(indirect,b);
 	}
 }
